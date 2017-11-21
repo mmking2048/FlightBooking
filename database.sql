@@ -17,7 +17,7 @@ CREATE TABLE Address
   AddressID SERIAL NOT NULL,
   PRIMARY KEY (AddressID),
   UNIQUE(StreetNumber, StreetName, City, State, ZipCode, Country),
-  CHECK (((Country == 'United States' OR Country=='Canada') AND State NOT NULL AND ZipCode NOT NULL) OR (Country <> 'United States' AND Country <> 'Canada'))
+  CHECK (((Country = 'United States' OR Country = 'Canada') AND State IS NOT NULL AND ZipCode IS NOT NULL) OR (Country <> 'United States' AND Country <> 'Canada'))
   --if country = United States or Canada then State and ZipCode NOT NULL
 );
 
@@ -32,7 +32,8 @@ CREATE TABLE Credit_Card
   AddressID INT NOT NULL,
   PRIMARY KEY (CCNumber),
   FOREIGN KEY (AddressID) REFERENCES Address(AddressID),
-
+  -- check to make sure all characters in CCNumber are digits
+  CHECK (CCNumber LIKE '%[^0123456789]%')
 );
 
 CREATE TABLE Airline
@@ -86,7 +87,7 @@ CREATE TABLE Flight
 CREATE TABLE Price
 (
   Class VARCHAR(7) NOT NULL,
-  Cost NUMERIC(7 2) NOT NULL,
+  Cost NUMERIC(7, 2) NOT NULL,
   Date DATE NOT NULL,
   FlightNumber INT NOT NULL,
   Airline CHAR(2) NOT NULL,
