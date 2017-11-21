@@ -16,9 +16,10 @@ CREATE TABLE Address
   Country VARCHAR(254) NOT NULL,
   AddressID SERIAL NOT NULL,
   PRIMARY KEY (AddressID),
-  UNIQUE(StreetNumber, StreetName, City, State, ZipCode, Country),
-  CHECK (((Country = 'United States' OR Country = 'Canada') AND State IS NOT NULL AND ZipCode IS NOT NULL) OR (Country <> 'United States' AND Country <> 'Canada'))
+  --Ensure we're not creating a new AddressID for a duplicate address
+  UNIQUE (StreetNumber, StreetName, City, State, ZipCode, Country),
   --if country = United States or Canada then State and ZipCode NOT NULL
+  CHECK (((Country = 'United States' OR Country = 'Canada') AND State IS NOT NULL AND ZipCode IS NOT NULL) OR (Country <> 'United States' AND Country <> 'Canada'))
 );
 
 CREATE TABLE Credit_Card
@@ -32,7 +33,7 @@ CREATE TABLE Credit_Card
   AddressID INT NOT NULL,
   PRIMARY KEY (CCNumber),
   FOREIGN KEY (AddressID) REFERENCES Address(AddressID),
-  -- check to make sure all characters in CCNumber are digits
+  --check to make sure all characters in CCNumber are digits
   CHECK (CCNumber LIKE '%[^0123456789]%')
 );
 
@@ -56,7 +57,7 @@ CREATE TABLE Customer
 
 CREATE TABLE Booking
 (
-  BookingID INT NOT NULL,
+  BookingID SERIAL NOT NULL,
   Class VARCHAR(7) NOT NULL,
   Email VARCHAR(254) NOT NULL,
   CCNumber CHAR(16) NOT NULL,
@@ -69,19 +70,17 @@ CREATE TABLE Flight
 (
   Date DATE NOT NULL,
   FlightNumber INT NOT NULL,
-  DepartureTime INT NOT NULL,
+  DepartureTime TIME(0) NOT NULL,
   MaxCoach INT NOT NULL,
   MaxFirstClass INT NOT NULL,
-  ArrivalTime INT NOT NULL,
+  ArrivalTime TIME(0) NOT NULL,
   DepartureAirport CHAR(3) NOT NULL,
   ArrivalAirport CHAR(3) NOT NULL,
   Airline CHAR(2) NOT NULL,
-  BookingID INT NOT NULL,
   PRIMARY KEY (Date, FlightNumber, Airline),
   FOREIGN KEY (DepartureAirport) REFERENCES Airport(IATA_ID),
   FOREIGN KEY (ArrivalAirport) REFERENCES Airport(IATA_ID),
-  FOREIGN KEY (Airline) REFERENCES Airline(Airline),
-  FOREIGN KEY (BookingID) REFERENCES Booking(BookingID)
+  FOREIGN KEY (Airline) REFERENCES Airline(Airline)
 );
 
 CREATE TABLE Price
@@ -113,7 +112,7 @@ CREATE TABLE LivesAt
   FOREIGN KEY (AddressID) REFERENCES Address(AddressID)
 );
 
-CREATE TABLE ConsistsOf
+CREATE TABLE BookingFlights
 (
   BookingID INT NOT NULL,
   Date DATE NOT NULL,
