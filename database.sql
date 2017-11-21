@@ -5,6 +5,7 @@ CREATE TABLE Airport
   Country VARCHAR(256) NOT NULL,
   State CHAR(2),
   PRIMARY KEY (IATA_ID),
+  -- State is only allowed to be null for non US and Canadian addresses
   CHECK (((Country = 'United States' OR Country = 'Canada') AND State IS NOT NULL OR (Country <> 'United States' AND Country <> 'Canada')))
 );
 
@@ -32,7 +33,7 @@ CREATE TABLE Credit_Card
   CardLastName VARCHAR(256) NOT NULL,
   ExpirationDate DATE NOT NULL,
   CVC CHAR(3) NOT NULL,
-  AddressID INT NOT NULL,
+  AddressID INT NOT NULL ON UPDATE CASCADE,
   PRIMARY KEY (CCNumber),
   FOREIGN KEY (AddressID) REFERENCES Address(AddressID),
   --check to make sure all characters in CCNumber are digits
@@ -52,7 +53,7 @@ CREATE TABLE Customer
   FirstName VARCHAR(256) NOT NULL,
   LastName VARCHAR(256) NOT NULL,
   Email VARCHAR(256) NOT NULL,
-  IATA_ID CHAR(3) NOT NULL,
+  IATA_ID CHAR(3) NOT NULL ON UPDATE CASCADE ON DELETE SET NULL,
   PRIMARY KEY (Email),
   FOREIGN KEY (IATA_ID) REFERENCES Airport(IATA_ID)
 );
@@ -61,8 +62,8 @@ CREATE TABLE Booking
 (
   BookingID SERIAL NOT NULL,
   Class VARCHAR(7) NOT NULL,
-  Email VARCHAR(256) NOT NULL,
-  CCNumber CHAR(16) NOT NULL,
+  Email VARCHAR(256) NOT NULL ON UPDATE CASCADE,
+  CCNumber CHAR(16) NOT NULL ON UPDATE CASCADE,
   PRIMARY KEY (BookingID),
   FOREIGN KEY (Email) REFERENCES Customer(Email),
   FOREIGN KEY (CCNumber) REFERENCES Credit_Card(CCNumber)
@@ -76,9 +77,9 @@ CREATE TABLE Flight
   MaxCoach INT NOT NULL,
   MaxFirstClass INT NOT NULL,
   ArrivalTime TIME(0) NOT NULL,
-  DepartureAirport CHAR(3) NOT NULL,
-  ArrivalAirport CHAR(3) NOT NULL,
-  Airline CHAR(2) NOT NULL,
+  DepartureAirport CHAR(3) NOT NULL ON UPDATE CASCADE,
+  ArrivalAirport CHAR(3) NOT NULL ON UPDATE CASCADE,
+  Airline CHAR(2) NOT NULL ON UPDATE CASCADE,
   PRIMARY KEY (Date, FlightNumber, Airline),
   FOREIGN KEY (DepartureAirport) REFERENCES Airport(IATA_ID),
   FOREIGN KEY (ArrivalAirport) REFERENCES Airport(IATA_ID),
@@ -89,17 +90,17 @@ CREATE TABLE Price
 (
   Class VARCHAR(7) NOT NULL,
   Cost NUMERIC(7, 2) NOT NULL,
-  Date DATE NOT NULL,
-  FlightNumber INT NOT NULL,
-  Airline CHAR(2) NOT NULL,
+  Date DATE NOT NULL ON UPDATE CASCADE ON DELETE CASCADE,
+  FlightNumber INT NOT NULL ON UPDATE CASCADE ON DELETE CASCADE,
+  Airline CHAR(2) NOT NULL ON UPDATE CASCADE ON DELETE CASCADE,
   PRIMARY KEY (Class, Date, FlightNumber, Airline),
   FOREIGN KEY (Date, FlightNumber, Airline) REFERENCES Flight(Date, FlightNumber, Airline)
 );
 
 CREATE TABLE CreditCardOwner
 (
-  Email VARCHAR(256) NOT NULL,
-  CCNumber CHAR(16) NOT NULL,
+  Email VARCHAR(256) NOT NULL ON UPDATE CASCADE,
+  CCNumber CHAR(16) NOT NULL ON UPDATE CASCADE,
   PRIMARY KEY (Email, CCNumber),
   FOREIGN KEY (Email) REFERENCES Customer(Email),
   FOREIGN KEY (CCNumber) REFERENCES Credit_Card(CCNumber)
@@ -107,8 +108,8 @@ CREATE TABLE CreditCardOwner
 
 CREATE TABLE LivesAt
 (
-  Email VARCHAR(256) NOT NULL,
-  AddressID INT NOT NULL,
+  Email VARCHAR(256) NOT NULL ON UPDATE CASCADE,
+  AddressID INT NOT NULL ON UPDATE CASCADE,
   PRIMARY KEY (Email, AddressID),
   FOREIGN KEY (Email) REFERENCES Customer(Email),
   FOREIGN KEY (AddressID) REFERENCES Address(AddressID)
@@ -116,10 +117,10 @@ CREATE TABLE LivesAt
 
 CREATE TABLE BookingFlights
 (
-  BookingID INT NOT NULL,
-  Date DATE NOT NULL,
-  FlightNumber INT NOT NULL,
-  Airline CHAR(2) NOT NULL,
+  BookingID INT NOT NULL ON UPDATE CASCADE,
+  Date DATE NOT NULL ON UPDATE CASCADE,
+  FlightNumber INT NOT NULL ON UPDATE CASCADE,
+  Airline CHAR(2) NOT NULL ON UPDATE CASCADE,
   PRIMARY KEY (BookingID, Date, FlightNumber, Airline),
   FOREIGN KEY (BookingID) REFERENCES Booking(BookingID),
   FOREIGN KEY (Date, FlightNumber, Airline) REFERENCES Flight(Date, FlightNumber, Airline)
@@ -128,9 +129,9 @@ CREATE TABLE BookingFlights
 CREATE TABLE MileageProgram
 (
   Miles INT NOT NULL,
-  Email VARCHAR(256) NOT NULL,
-  Airline CHAR(2) NOT NULL,
-  BookingID INT NOT NULL,
+  Email VARCHAR(256) NOT NULL ON UPDATE CASCADE,
+  Airline CHAR(2) NOT NULL ON UPDATE CASCADE,
+  BookingID INT NOT NULL ON UPDATE CASCADE,
   PRIMARY KEY (Email, Airline, BookingID),
   FOREIGN KEY (Email) REFERENCES Customer(Email),
   FOREIGN KEY (Airline) REFERENCES Airline(Airline),
