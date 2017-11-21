@@ -129,7 +129,7 @@ CREATE TABLE BookingFlights
 
 CREATE TABLE MileageProgram
 (
-  Miles INT NOT NULL,
+  Miles INT NOT NULL DEFAULT 0,
   Email VARCHAR(256) NOT NULL,
   Airline CHAR(2) NOT NULL,
   BookingID INT NOT NULL,
