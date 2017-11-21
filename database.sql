@@ -1,19 +1,21 @@
 CREATE TABLE Airport
 (
   IATA_ID CHAR(3) NOT NULL,
-  Country VARCHAR(254) NOT NULL,
+  AirportName VARCHAR(256) NOT NULL,
+  Country VARCHAR(256) NOT NULL,
   State CHAR(2),
-  PRIMARY KEY (IATA_ID)
+  PRIMARY KEY (IATA_ID),
+  CHECK (((Country = 'United States' OR Country = 'Canada') AND State IS NOT NULL OR (Country <> 'United States' AND Country <> 'Canada')))
 );
 
 CREATE TABLE Address
 (
   StreetNumber INT NOT NULL,
-  StreetName VARCHAR(254) NOT NULL,
-  City VARCHAR(254) NOT NULL,
+  StreetName VARCHAR(256) NOT NULL,
+  City VARCHAR(256) NOT NULL,
   State CHAR(2),
   ZipCode CHAR(5),
-  Country VARCHAR(254) NOT NULL,
+  Country VARCHAR(256) NOT NULL,
   AddressID SERIAL NOT NULL,
   PRIMARY KEY (AddressID),
   --Ensure we're not creating a new AddressID for a duplicate address
@@ -24,10 +26,10 @@ CREATE TABLE Address
 
 CREATE TABLE Credit_Card
 (
-  Type VARCHAR(254) NOT NULL,
+  Type VARCHAR(256) NOT NULL,
   CCNumber CHAR(16) NOT NULL,
-  CardFirstName VARCHAR(254) NOT NULL,
-  CardLastName VARCHAR(254) NOT NULL,
+  CardFirstName VARCHAR(256) NOT NULL,
+  CardLastName VARCHAR(256) NOT NULL,
   ExpirationDate DATE NOT NULL,
   CVC CHAR(3) NOT NULL,
   AddressID INT NOT NULL,
@@ -40,16 +42,16 @@ CREATE TABLE Credit_Card
 CREATE TABLE Airline
 (
   Airline CHAR(2) NOT NULL,
-  Country VARCHAR(254) NOT NULL,
-  AirlineName VARCHAR(254) NOT NULL,
+  Country VARCHAR(256) NOT NULL,
+  AirlineName VARCHAR(256) NOT NULL,
   PRIMARY KEY (Airline)
 );
 
 CREATE TABLE Customer
 (
-  FirstName VARCHAR(254) NOT NULL,
-  LastName VARCHAR(254) NOT NULL,
-  Email VARCHAR(254) NOT NULL,
+  FirstName VARCHAR(256) NOT NULL,
+  LastName VARCHAR(256) NOT NULL,
+  Email VARCHAR(256) NOT NULL,
   IATA_ID CHAR(3) NOT NULL,
   PRIMARY KEY (Email),
   FOREIGN KEY (IATA_ID) REFERENCES Airport(IATA_ID)
@@ -59,7 +61,7 @@ CREATE TABLE Booking
 (
   BookingID SERIAL NOT NULL,
   Class VARCHAR(7) NOT NULL,
-  Email VARCHAR(254) NOT NULL,
+  Email VARCHAR(256) NOT NULL,
   CCNumber CHAR(16) NOT NULL,
   PRIMARY KEY (BookingID),
   FOREIGN KEY (Email) REFERENCES Customer(Email),
@@ -96,7 +98,7 @@ CREATE TABLE Price
 
 CREATE TABLE CreditCardOwner
 (
-  Email VARCHAR(254) NOT NULL,
+  Email VARCHAR(256) NOT NULL,
   CCNumber CHAR(16) NOT NULL,
   PRIMARY KEY (Email, CCNumber),
   FOREIGN KEY (Email) REFERENCES Customer(Email),
@@ -105,7 +107,7 @@ CREATE TABLE CreditCardOwner
 
 CREATE TABLE LivesAt
 (
-  Email VARCHAR(254) NOT NULL,
+  Email VARCHAR(256) NOT NULL,
   AddressID INT NOT NULL,
   PRIMARY KEY (Email, AddressID),
   FOREIGN KEY (Email) REFERENCES Customer(Email),
@@ -126,7 +128,7 @@ CREATE TABLE BookingFlights
 CREATE TABLE MileageProgram
 (
   Miles INT NOT NULL,
-  Email VARCHAR(254) NOT NULL,
+  Email VARCHAR(256) NOT NULL,
   Airline CHAR(2) NOT NULL,
   BookingID INT NOT NULL,
   PRIMARY KEY (Email, Airline, BookingID),
