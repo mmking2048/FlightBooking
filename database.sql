@@ -17,6 +17,7 @@ CREATE TABLE Address
   State CHAR(2),
   ZipCode CHAR(5),
   Country VARCHAR(256) NOT NULL,
+  --Address ID needed since State and ZipCode are optional
   AddressID SERIAL NOT NULL,
   PRIMARY KEY (AddressID),
   --Ensure we're not creating a new AddressID for a duplicate address
@@ -37,7 +38,7 @@ CREATE TABLE Credit_Card
   PRIMARY KEY (CCNumber),
   FOREIGN KEY (AddressID) REFERENCES Address(AddressID) ON UPDATE CASCADE,
   --check to make sure all characters in CCNumber are digits
-  CHECK (CCNumber LIKE '%[^0123456789]%')
+  CHECK (CCNumber NOT LIKE '%[^0-9]%')
 );
 
 CREATE TABLE Airline
