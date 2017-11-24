@@ -34,3 +34,24 @@ WHERE CCNumber = '1111000011110000';
 -- Delete credit card
 DELETE FROM CreditCard
 WHERE CCNumber = '1111000011110000';
+
+
+
+-- Search flights
+-- Recursive query required
+
+-- Create booking
+-- May need to add overbooking detection by decrementing MaxCoach or MaxFirstClass
+-- Check will need to be added so MaxCoach and MaxFirstClass do not go below 0
+
+-- Browse bookings for customer
+-- In code, need to create a dictionary keyed on BookingID
+SELECT b.Class, bf.Date, bf.FlightNumber, bf.Airline, f.DepartureTime, f.ArrivalTime, f.DepartureAirport, f.ArrivalAirport
+FROM Booking b JOIN BookingFlights bf ON b.BookingID = bf.BookingID
+               JOIN Flight f ON bf.FlightNumber = f.FlightNumber
+WHERE Email = 'ab@email.com';
+
+-- Delete booking
+-- If overbooking detection is added, increment MaxCoach and MaxFirstClass
+DELETE FROM Booking
+WHERE BookingID = 1;
