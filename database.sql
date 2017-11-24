@@ -123,7 +123,7 @@ CREATE TABLE BookingFlights
   Airline CHAR(2) NOT NULL,
   Class VARCHAR(7) NOT NULL,
   PRIMARY KEY (BookingID, Date, FlightNumber, Airline),
-  FOREIGN KEY (BookingID) REFERENCES Booking(BookingID) ON UPDATE CASCADE,
+  FOREIGN KEY (BookingID) REFERENCES Booking(BookingID) ON UPDATE CASCADE ON DELETE CASCADE,
   FOREIGN KEY (Date, FlightNumber, Airline) REFERENCES Flight(Date, FlightNumber, Airline) ON UPDATE CASCADE
 );
 
