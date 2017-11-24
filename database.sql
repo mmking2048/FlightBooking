@@ -62,7 +62,6 @@ CREATE TABLE Customer
 CREATE TABLE Booking
 (
   BookingID SERIAL NOT NULL,
-  Class VARCHAR(7) NOT NULL,
   Email TEXT NOT NULL,
   CCNumber CHAR(16) NOT NULL,
   PRIMARY KEY (BookingID),
@@ -122,6 +121,7 @@ CREATE TABLE BookingFlights
   Date DATE NOT NULL,
   FlightNumber INT NOT NULL,
   Airline CHAR(2) NOT NULL,
+  Class VARCHAR(7) NOT NULL,
   PRIMARY KEY (BookingID, Date, FlightNumber, Airline),
   FOREIGN KEY (BookingID) REFERENCES Booking(BookingID) ON UPDATE CASCADE,
   FOREIGN KEY (Date, FlightNumber, Airline) REFERENCES Flight(Date, FlightNumber, Airline) ON UPDATE CASCADE
