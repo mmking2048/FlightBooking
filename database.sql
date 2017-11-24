@@ -1,8 +1,8 @@
 CREATE TABLE Airport
 (
   IATA_ID CHAR(3) NOT NULL,
-  AirportName VARCHAR(256) NOT NULL,
-  Country VARCHAR(256) NOT NULL,
+  AirportName TEXT NOT NULL,
+  Country TEXT NOT NULL,
   State CHAR(2),
   PRIMARY KEY (IATA_ID),
   -- State is only allowed to be null for non US and Canadian addresses
@@ -12,11 +12,11 @@ CREATE TABLE Airport
 CREATE TABLE Address
 (
   StreetNumber INT NOT NULL,
-  StreetName VARCHAR(256) NOT NULL,
-  City VARCHAR(256) NOT NULL,
+  StreetName TEXT NOT NULL,
+  City TEXT NOT NULL,
   State CHAR(2),
   ZipCode CHAR(5),
-  Country VARCHAR(256) NOT NULL,
+  Country TEXT NOT NULL,
   --Address ID needed since State and ZipCode are optional
   AddressID SERIAL NOT NULL,
   PRIMARY KEY (AddressID),
@@ -28,10 +28,10 @@ CREATE TABLE Address
 
 CREATE TABLE Credit_Card
 (
-  Type VARCHAR(256) NOT NULL,
+  Type TEXT NOT NULL,
   CCNumber CHAR(16) NOT NULL,
-  CardFirstName VARCHAR(256) NOT NULL,
-  CardLastName VARCHAR(256) NOT NULL,
+  CardFirstName TEXT NOT NULL,
+  CardLastName TEXT NOT NULL,
   ExpirationDate DATE NOT NULL,
   CVC CHAR(3) NOT NULL,
   AddressID INT NOT NULL,
@@ -44,16 +44,16 @@ CREATE TABLE Credit_Card
 CREATE TABLE Airline
 (
   Airline CHAR(2) NOT NULL,
-  Country VARCHAR(256) NOT NULL,
-  AirlineName VARCHAR(256) NOT NULL,
+  Country TEXT NOT NULL,
+  AirlineName TEXT NOT NULL,
   PRIMARY KEY (Airline)
 );
 
 CREATE TABLE Customer
 (
-  FirstName VARCHAR(256) NOT NULL,
-  LastName VARCHAR(256) NOT NULL,
-  Email VARCHAR(256) NOT NULL,
+  FirstName TEXT NOT NULL,
+  LastName TEXT NOT NULL,
+  Email TEXT NOT NULL,
   IATA_ID CHAR(3) NOT NULL,
   PRIMARY KEY (Email),
   FOREIGN KEY (IATA_ID) REFERENCES Airport(IATA_ID) ON UPDATE CASCADE ON DELETE SET NULL
@@ -62,8 +62,7 @@ CREATE TABLE Customer
 CREATE TABLE Booking
 (
   BookingID SERIAL NOT NULL,
-  Class VARCHAR(7) NOT NULL,
-  Email VARCHAR(256) NOT NULL,
+  Email TEXT NOT NULL,
   CCNumber CHAR(16) NOT NULL,
   PRIMARY KEY (BookingID),
   FOREIGN KEY (Email) REFERENCES Customer(Email) ON UPDATE CASCADE,
@@ -100,7 +99,7 @@ CREATE TABLE Price
 
 CREATE TABLE CreditCardOwner
 (
-  Email VARCHAR(256) NOT NULL,
+  Email TEXT NOT NULL,
   CCNumber CHAR(16) NOT NULL,
   PRIMARY KEY (Email, CCNumber),
   FOREIGN KEY (Email) REFERENCES Customer(Email) ON UPDATE CASCADE,
@@ -109,7 +108,7 @@ CREATE TABLE CreditCardOwner
 
 CREATE TABLE LivesAt
 (
-  Email VARCHAR(256) NOT NULL,
+  Email TEXT NOT NULL,
   AddressID INT NOT NULL,
   PRIMARY KEY (Email, AddressID),
   FOREIGN KEY (Email) REFERENCES Customer(Email) ON UPDATE CASCADE,
@@ -122,6 +121,7 @@ CREATE TABLE BookingFlights
   Date DATE NOT NULL,
   FlightNumber INT NOT NULL,
   Airline CHAR(2) NOT NULL,
+  Class VARCHAR(7) NOT NULL,
   PRIMARY KEY (BookingID, Date, FlightNumber, Airline),
   FOREIGN KEY (BookingID) REFERENCES Booking(BookingID) ON UPDATE CASCADE,
   FOREIGN KEY (Date, FlightNumber, Airline) REFERENCES Flight(Date, FlightNumber, Airline) ON UPDATE CASCADE
@@ -130,7 +130,7 @@ CREATE TABLE BookingFlights
 CREATE TABLE MileageProgram
 (
   Miles INT NOT NULL DEFAULT 0,
-  Email VARCHAR(256) NOT NULL,
+  Email TEXT NOT NULL,
   Airline CHAR(2) NOT NULL,
   BookingID INT NOT NULL,
   PRIMARY KEY (Email, Airline, BookingID),
