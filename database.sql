@@ -26,7 +26,7 @@ CREATE TABLE Address
   CHECK (((Country = 'United States' OR Country = 'Canada') AND State IS NOT NULL AND ZipCode IS NOT NULL) OR (Country <> 'United States' AND Country <> 'Canada'))
 );
 
-CREATE TABLE Credit_Card
+CREATE TABLE CreditCard
 (
   Type TEXT NOT NULL,
   CCNumber CHAR(16) NOT NULL,
@@ -66,7 +66,7 @@ CREATE TABLE Booking
   CCNumber CHAR(16) NOT NULL,
   PRIMARY KEY (BookingID),
   FOREIGN KEY (Email) REFERENCES Customer(Email) ON UPDATE CASCADE,
-  FOREIGN KEY (CCNumber) REFERENCES Credit_Card(CCNumber) ON UPDATE CASCADE
+  FOREIGN KEY (CCNumber) REFERENCES CreditCard(CCNumber) ON UPDATE CASCADE
 );
 
 CREATE TABLE Flight
@@ -103,7 +103,7 @@ CREATE TABLE CreditCardOwner
   CCNumber CHAR(16) NOT NULL,
   PRIMARY KEY (Email, CCNumber),
   FOREIGN KEY (Email) REFERENCES Customer(Email) ON UPDATE CASCADE,
-  FOREIGN KEY (CCNumber) REFERENCES Credit_Card(CCNumber) ON UPDATE CASCADE
+  FOREIGN KEY (CCNumber) REFERENCES CreditCard(CCNumber) ON UPDATE CASCADE
 );
 
 CREATE TABLE LivesAt
@@ -123,7 +123,7 @@ CREATE TABLE BookingFlights
   Airline CHAR(2) NOT NULL,
   Class VARCHAR(7) NOT NULL,
   PRIMARY KEY (BookingID, Date, FlightNumber, Airline),
-  FOREIGN KEY (BookingID) REFERENCES Booking(BookingID) ON UPDATE CASCADE,
+  FOREIGN KEY (BookingID) REFERENCES Booking(BookingID) ON UPDATE CASCADE ON DELETE CASCADE,
   FOREIGN KEY (Date, FlightNumber, Airline) REFERENCES Flight(Date, FlightNumber, Airline) ON UPDATE CASCADE
 );
 
