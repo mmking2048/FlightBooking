@@ -18,6 +18,6 @@ The symbol farther from the entity denotes minimal participation:
  - single perpendicular line: single participation
  - crow's foot: multiple participation
 
- ## Relational schema
+## Relational schema
 
  Relational schema can be found [here](erdplus-schema.png).
