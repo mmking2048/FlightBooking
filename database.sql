@@ -80,10 +80,14 @@ CREATE TABLE Flight
   DepartureAirport CHAR(3) NOT NULL,
   ArrivalAirport CHAR(3) NOT NULL,
   Airline CHAR(2) NOT NULL,
+  BookedCoach INT NOT NULL DEFAULT 0,
+  BookedFirst INT NOT NULL DEFAULT 0,
   PRIMARY KEY (Date, FlightNumber, Airline),
   FOREIGN KEY (DepartureAirport) REFERENCES Airport(IATA_ID) ON UPDATE CASCADE,
   FOREIGN KEY (ArrivalAirport) REFERENCES Airport(IATA_ID) ON UPDATE CASCADE,
-  FOREIGN KEY (Airline) REFERENCES Airline(Airline) ON UPDATE CASCADE
+  FOREIGN KEY (Airline) REFERENCES Airline(Airline) ON UPDATE CASCADE,
+  CHECK (BookedCoach <= MaxCoach),
+  CHECK (BookedFirst <= MaxFirstClass)
 );
 
 CREATE TABLE Price
