@@ -145,6 +145,18 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Models\Address.cs" />
+    <Compile Include="Models\Airline.cs" />
+    <Compile Include="Models\Airport.cs" />
+    <Compile Include="Models\Booking.cs" />
+    <Compile Include="Models\BookingFlights.cs" />
+    <Compile Include="Models\CreditCard.cs" />
+    <Compile Include="Models\CreditCardOwner.cs" />
+    <Compile Include="Models\Customer.cs" />
+    <Compile Include="Models\Flight.cs" />
+    <Compile Include="Models\LivesAt.cs" />
+    <Compile Include="Models\MileageProgram.cs" />
+    <Compile Include="Models\Price.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -187,7 +199,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
-    <Folder Include="Models\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="fonts\glyphicons-halflings-regular.woff" />
