@@ -10,5 +10,15 @@ namespace FlightBooking.Models
         public string IataID { get; set; }
         public IEnumerable<Address> LivesAt { get; set; }
         public IEnumerable<CreditCard> OwnsCreditCards { get; set; }
+
+        public Customer(string firstName, string lastName, string email, string iataID)
+        {
+            FirstName = firstName;
+            LastName = lastName;
+            Email = email;
+            IataID = iataID;
+            LivesAt = new List<Address>();
+            OwnsCreditCards = new List<CreditCard>();
+        }
     }
 }

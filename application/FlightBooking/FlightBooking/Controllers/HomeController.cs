@@ -6,20 +6,8 @@ namespace FlightBooking.Controllers
     {
         public ActionResult Index()
         {
-            return View();
-        }
-
-        public ActionResult About()
-        {
-            ViewBag.Message = "Your application description page.";
-
-            return View();
-        }
-
-        public ActionResult Contact()
-        {
-            ViewBag.Message = "Your contact page.";
-
+            var client = new SqlClient(new SqlParser());
+            var customers = client.GetCustomers("ab@email.com", "A", "B");
             return View();
         }
     }
