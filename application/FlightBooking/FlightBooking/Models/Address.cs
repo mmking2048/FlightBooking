@@ -15,6 +15,7 @@ namespace FlightBooking.Models
             AddressID = addressID;
         }
 
+        // TODO: Add constraints to allowed values
         [DisplayName("Street Number")]
         public int StreetNumber { get; set; }
         [DisplayName("Street Name")]
