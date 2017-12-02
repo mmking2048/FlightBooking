@@ -212,7 +212,6 @@
     <Content Include="Views\CreditCard\Delete.cshtml" />
     <Content Include="Views\CreditCard\Edit.cshtml" />
     <Content Include="Views\Address\Create.cshtml" />
->>>>>>> Finished views for address
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
