@@ -1,0 +1,22 @@
+﻿@model IEnumerable<FlightBooking.Models.CreditCard>
+
+<table class="table">
+    <tr>
+        <th>@Html.DisplayNameFor(model => model.Type)</th>
+        <th>@Html.DisplayNameFor(model => model.CcNumber)</th>
+        <th>@Html.DisplayNameFor(model => model.CardFirstName)</th>
+        <th>@Html.DisplayNameFor(model => model.CardLastName)</th>
+        <th>@Html.DisplayNameFor(model => model.ExpirationDate)</th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>@Html.DisplayFor(modelItem => item.Type)</td>
+            <td>@Html.DisplayFor(modelItem => item.CcNumber)</td>
+            <td>@Html.DisplayFor(modelItem => item.CardFirstName)</td>
+            <td>@Html.DisplayFor(modelItem => item.CardLastName)</td>
+            <td>@Html.DisplayFor(modelItem => item.ExpirationDate)</td>
+        </tr>
+    }
+</table>
