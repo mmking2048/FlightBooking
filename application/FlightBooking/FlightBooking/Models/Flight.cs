@@ -15,4 +15,20 @@ namespace FlightBooking.Models
         public int BookedCoach { get; set; }
         public int BookedFirstClass { get; set; }
     }
+
+    public Flight(DateTime date, int flightNumber, DateTime departureTime, 
+        DateTime arrivalTime, string departureAirport, string arrivalAirport, 
+        int maxCoach, int maxFirstClass, int bookedCoach, int bookedFirstClass)
+    {
+        Date = date;
+        FlightNumber = flightNumber;
+        DepartureTime = departureTime;
+        ArrivalTime = arrivalTime;
+        DepartureAirport = departureAirport;
+        ArrivalAirport = arrivalAirport;
+        MaxCoach = maxCoach;
+        MaxFirstClass = maxFirstClass;
+        BookedCoach = bookedCoach;
+        BookedFirstClass = bookedFirstClass;        
+    }
 }
