@@ -1,5 +1,9 @@
 ﻿@model IEnumerable<FlightBooking.Models.Address>
 
+<p>
+    @Html.ActionLink("Add New Address", "Create")
+</p>
+
 <table class="table">
     <tr>
         <th>@Html.DisplayNameFor(model => model.StreetNumber)</th>
