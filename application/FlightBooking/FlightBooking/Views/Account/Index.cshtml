@@ -1,0 +1,9 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+<div class="container">
+    @{ Html.RenderAction("Index", "Address"); }
+    @{ Html.RenderAction("Index", "CreditCard"); }
+</div>
