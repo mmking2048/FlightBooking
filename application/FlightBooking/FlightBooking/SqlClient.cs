@@ -247,15 +247,74 @@ namespace FlightBooking
                 }
             }
         }
-                    #endregion
+        #endregion
 
-                    #region SQL INSERTS
-                    #endregion
+        #region SQL INSERTS
 
-                    #region SQL UPDATES
-                    #endregion
+        public void InsertCustomer(string firstName, string lastName, string email, string iataID)
+        {
+            using (var conn = new NpgsqlConnection(_connString))
+            {
+                conn.Open();
 
-                    #region SQL DELETES
-                    #endregion
+                using (var cmd = new NpgsqlCommand())
+                {
+                    cmd.Connection = conn;
+                    cmd.CommandText =
+                        "INSERT INTO customer (email, firstname, lastname, iata_id) VALUES (@email, @firstname, @lastname, @iata_id);";
+                    cmd.Parameters.AddWithValue("email", email);
+                    cmd.Parameters.AddWithValue("firstname", firstName);
+                    cmd.Parameters.AddWithValue("lastname", lastName);
+                    cmd.Parameters.AddWithValue("iata_id", iataID);
+                    cmd.ExecuteNonQuery();
                 }
+            }
+        }
+        #endregion
+
+        #region SQL UPDATES
+
+        public void UpdateCustomer(string firstName, string lastName, string email, string iataID)
+        {
+            using (var conn = new NpgsqlConnection(_connString))
+            {
+                conn.Open();
+
+                using (var cmd = new NpgsqlCommand())
+                {
+                    cmd.Connection = conn;
+                    cmd.CommandText =
+                        "UPDATE customer SET firstname = @firstname, lastname = @lastname, iata_id = @iata_id WHERE email = @email;";
+                    cmd.Parameters.AddWithValue("email", email);
+                    cmd.Parameters.AddWithValue("firstname", firstName);
+                    cmd.Parameters.AddWithValue("lastname", lastName);
+                    cmd.Parameters.AddWithValue("iata_id", iataID);
+                    cmd.ExecuteNonQuery();
+                }
+            }
+        }
+
+        #endregion
+
+        #region SQL DELETES
+
+        public void DeleteCustomer(string email)
+        {
+            using (var conn = new NpgsqlConnection(_connString))
+            {
+                conn.Open();
+
+                using (var cmd = new NpgsqlCommand())
+                {
+                    cmd.Connection = conn;
+                    cmd.CommandText =
+                        "DELETE FROM customer WHERE email = @email;";
+                    cmd.Parameters.AddWithValue("email", email);
+                    cmd.ExecuteNonQuery();
+                }
+            }
+        }
+
+        #endregion
+     }
 }
