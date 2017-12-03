@@ -4,6 +4,8 @@ CREATE TABLE Airport
   AirportName TEXT NOT NULL,
   Country TEXT NOT NULL,
   State CHAR(2),
+  Latitude NUMERIC NOT NULL,
+  Longitude NUMERIC NOT NULL,
   PRIMARY KEY (IATA_ID),
   -- State is only allowed to be null for non US and Canadian addresses
   CHECK (((Country = 'United States' OR Country = 'Canada') AND State IS NOT NULL OR (Country <> 'United States' AND Country <> 'Canada')))
@@ -73,10 +75,10 @@ CREATE TABLE Flight
 (
   Date DATE NOT NULL,
   FlightNumber INT NOT NULL,
-  DepartureTime TIME(0) NOT NULL,
+  DepartureTime TIMETZ(0) NOT NULL,
   MaxCoach INT NOT NULL,
   MaxFirstClass INT NOT NULL,
-  ArrivalTime TIME(0) NOT NULL,
+  ArrivalTime TIMETZ(0) NOT NULL,
   DepartureAirport CHAR(3) NOT NULL,
   ArrivalAirport CHAR(3) NOT NULL,
   Airline CHAR(2) NOT NULL,
@@ -92,12 +94,12 @@ CREATE TABLE Flight
 
 CREATE TABLE Price
 (
-  Class VARCHAR(7) NOT NULL,
+  FlightClass VARCHAR(7) NOT NULL,
   Cost NUMERIC(7, 2) NOT NULL,
   Date DATE NOT NULL,
   FlightNumber INT NOT NULL,
   Airline CHAR(2) NOT NULL,
-  PRIMARY KEY (Class, Date, FlightNumber, Airline),
+  PRIMARY KEY (FlightClass, Date, FlightNumber, Airline),
   FOREIGN KEY (Date, FlightNumber, Airline) REFERENCES Flight(Date, FlightNumber, Airline) ON UPDATE CASCADE ON DELETE CASCADE
 );
 
@@ -125,7 +127,7 @@ CREATE TABLE BookingFlights
   Date DATE NOT NULL,
   FlightNumber INT NOT NULL,
   Airline CHAR(2) NOT NULL,
-  Class VARCHAR(7) NOT NULL,
+  FlightClass VARCHAR(7) NOT NULL,
   PRIMARY KEY (BookingID, Date, FlightNumber, Airline),
   FOREIGN KEY (BookingID) REFERENCES Booking(BookingID) ON UPDATE CASCADE ON DELETE CASCADE,
   FOREIGN KEY (Date, FlightNumber, Airline) REFERENCES Flight(Date, FlightNumber, Airline) ON UPDATE CASCADE

@@ -46,7 +46,7 @@ WHERE CCNumber = '1111000011110000';
 
 -- Browse bookings for customer
 -- In code, need to create a dictionary keyed on BookingID
-SELECT b.Class, bf.Date, bf.FlightNumber, bf.Airline, f.DepartureTime, f.ArrivalTime, f.DepartureAirport, f.ArrivalAirport
+SELECT b.FlightClass, bf.Date, bf.FlightNumber, bf.Airline, f.DepartureTime, f.ArrivalTime, f.DepartureAirport, f.ArrivalAirport
 FROM Booking b JOIN BookingFlights bf ON b.BookingID = bf.BookingID
                JOIN Flight f ON bf.FlightNumber = f.FlightNumber
 WHERE Email = 'ab@email.com';
