@@ -75,10 +75,10 @@ CREATE TABLE Flight
 (
   Date DATE NOT NULL,
   FlightNumber INT NOT NULL,
-  DepartureTime TIME(0) NOT NULL,
+  DepartureTime TIMETZ(0) NOT NULL,
   MaxCoach INT NOT NULL,
   MaxFirstClass INT NOT NULL,
-  ArrivalTime TIME(0) NOT NULL,
+  ArrivalTime TIMETZ(0) NOT NULL,
   DepartureAirport CHAR(3) NOT NULL,
   ArrivalAirport CHAR(3) NOT NULL,
   Airline CHAR(2) NOT NULL,

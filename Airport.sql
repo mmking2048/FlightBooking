@@ -1,11 +1,3 @@
-CREATE TABLE Airport (
-    `IATA_ID` VARCHAR(3) CHARACTER SET utf8,
-    `AirportName` VARCHAR(48) CHARACTER SET utf8,
-    `Country` VARCHAR(20) CHARACTER SET utf8,
-    `State` VARCHAR(2) CHARACTER SET utf8,
-    `Latitude` NUMERIC(11, 9),
-    `Longitude` NUMERIC(12, 9)
-);
 INSERT INTO Airport VALUES ('CAN','Guangzhou Baiyun International Airport','China',NULL,23.39240074,113.2990036);
 INSERT INTO Airport VALUES ('CTU','Chengdu Shuangliu International Airport','China',NULL,30.57850075,103.9469986);
 INSERT INTO Airport VALUES ('PEK','Beijing Capital International Airport','China',NULL,40.08010101,116.5849991);
@@ -21,7 +13,6 @@ INSERT INTO Airport VALUES ('KUL','Kuala Lumpur International Airport','Malaysia
 INSERT INTO Airport VALUES ('AMS','Amsterdam Airport Schiphol','Netherlands',NULL,52.30860138,4.76388979);
 INSERT INTO Airport VALUES ('SIN','Singapore Changi Airport','Singapore',NULL,1.35019,103.994003);
 INSERT INTO Airport VALUES ('ICN','Incheon International Airport','South Korea',NULL,37.46910095,126.4509964);
-INSERT INTO Airport VALUES ('SSN','Seoul Air Base','South Korea',NULL,37.44580078,127.1139984);
 INSERT INTO Airport VALUES ('MAD','Madrid Barajas Airport','Spain',NULL,40.471926,-3.56264);
 INSERT INTO Airport VALUES ('BKK','Suvarnabhumi Airport','Thailand',NULL,13.68109989,100.7470016);
 INSERT INTO Airport VALUES ('IST','Ataturk International Airport','Turkey',NULL,40.97689819,28.81459999);
