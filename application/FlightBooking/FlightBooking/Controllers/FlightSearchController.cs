@@ -23,20 +23,9 @@ namespace FlightBooking.Controllers
                 if (ModelState.IsValid)
                 {
                     // TODO: database search for flights
-                    var booking = new Booking();
-                    var flight1 = new Flight();
-                    var flight2 = new Flight();
-                    flight1.FlightNumber = 111;
-                    flight2.FlightNumber = 222;
-                    flight1.DepartureAirport = "ORD";
-                    flight1.ArrivalAirport = "MIA";
-                    flight2.DepartureAirport = "MIA";
-                    flight2.ArrivalAirport = "FCO";
-                    flight1.DepartureTime = DateTime.Now;
-                    flight1.ArrivalTime = DateTime.Now + TimeSpan.FromHours(3);
-                    flight1.DepartureTime = DateTime.Now + TimeSpan.FromHours(4);
-                    flight1.ArrivalTime = DateTime.Now + TimeSpan.FromHours(12);
-                    
+                    var booking = new Booking(1, "ab@email.com", "1111000011110000", "Coach");
+                    var flight1 = new Flight(DateTime.Now, 1, DateTimeOffset.Now, DateTimeOffset.Now + TimeSpan.FromHours(3), "ORD", "MIA", 10, 10, 0, 0);
+                    var flight2 = new Flight(DateTime.Now, 2, DateTimeOffset.Now + TimeSpan.FromHours(4), DateTimeOffset.Now + TimeSpan.FromHours(12), "MIA", "FCO", 10, 10, 0, 0);
                     booking.BookingFlights = new[] {flight1, flight2};
                     var connections = new[] {booking};
 

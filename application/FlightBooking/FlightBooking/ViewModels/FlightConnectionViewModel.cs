@@ -16,17 +16,17 @@ namespace FlightBooking.ViewModels
             Flights = booking.BookingFlights;
 
             if (flights.All(f => f.BookedCoach != f.MaxCoach))
-                CoachPrice = flights.Sum(f => f.Prices.First(p => p.Class == "Coach").Cost);
+                CoachPrice = flights.Sum(f => f.Prices.First(p => p.FlightClass == "Coach").Cost);
 
             if (flights.All(f => f.BookedFirstClass != f.MaxFirstClass))
-                FirstClassPrice = flights.Sum(f => f.Prices.First(p => p.Class == "First Class").Cost);
+                FirstClassPrice = flights.Sum(f => f.Prices.First(p => p.FlightClass == "First Class").Cost);
         }
 
         public decimal? CoachPrice { get; }
         public decimal? FirstClassPrice { get; }
         public TimeSpan TotalLength { get; }
-        public DateTime DepartureTime { get; }
-        public DateTime ArrivalTime { get; }
+        public DateTimeOffset DepartureTime { get; }
+        public DateTimeOffset ArrivalTime { get; }
         public IEnumerable<Flight> Flights { get; }
     }
 }

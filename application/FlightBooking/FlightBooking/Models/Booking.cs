@@ -10,13 +10,17 @@ namespace FlightBooking.Models
         public string FlightClass { get; set; }
         public IEnumerable<Flight> BookingFlights { get; set; }
 
-        public Booking(long bookingID, string email, string ccNumber, string flightClass)
+        public Booking(long bookingID, string email, string ccNumber, string flightClass) : this(bookingID, email, ccNumber, flightClass, new List<Flight>())
+        {
+        }
+
+        public Booking(long bookingID, string email, string ccNumber, string flightClass, IEnumerable<Flight> flights)
         {
             BookingID = bookingID;
             Email = email;
             CcNumber = ccNumber;
             FlightClass = flightClass;
-            BookingFlights = new List<Flight>();
+            BookingFlights = flights;
         }
     }
 }
