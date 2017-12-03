@@ -99,3 +99,5 @@ _[Ss]cripts
 *.nupkg
 *.ncrunchsolution
 *.dot[Cc]over
+/application/FlightBooking/.vs/FlightBooking/v15/Server/sqlite3/storage.ide-shm
+/application/FlightBooking/.vs/FlightBooking/v15/Server/sqlite3/storage.ide-wal
