@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace FlightBooking.Models
 {
@@ -14,6 +15,7 @@ namespace FlightBooking.Models
         public int MaxFirstClass { get; set; }
         public int BookedCoach { get; set; }
         public int BookedFirstClass { get; set; }
+        public IEnumerable<Price> Prices { get; set; }
 
         public Flight(DateTime date, int flightNumber, DateTimeOffset departureTime,
         DateTimeOffset arrivalTime, string departureAirport, string arrivalAirport,
