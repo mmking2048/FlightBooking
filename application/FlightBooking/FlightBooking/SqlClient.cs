@@ -44,15 +44,217 @@ namespace FlightBooking
                 }
             }
         }
-        #endregion
 
-        #region SQL INSERTS
-        #endregion
+        public IEnumerable<Address> GetAddress(int streetNumber, string streetName, string city, string zipCode, string country, long addressID)
+        {
+            using (var conn = new NpgsqlConnection(_connString))
+            {
+                conn.Open();
 
-        #region SQL UPDATES
-        #endregion
+                using (var cmd = new NpgsqlCommand())
+                {
+                    cmd.Connection = conn;
+                    cmd.CommandText = "SELECT * FROM address WHERE streetnumber = @streeetnumber AND streetname = @streetname" +
+                        "AND city = @city AND zipcode = @zipcode AND country = @country AND addressid = @addressid";
+                    cmd.Parameters.AddWithValue("streetnumber", streetNumber);
+                    cmd.Parameters.AddWithValue("streetname", streetName);
+                    cmd.Parameters.AddWithValue("city", city);
+                    cmd.Parameters.AddWithValue("zipcode", zipCode);
+                    cmd.Parameters.AddWithValue("country", country);
+                    cmd.Parameters.AddWithValue("addressid", addressID);
 
-        #region SQL DELETES
-        #endregion
-    }
+                    using (var reader = cmd.ExecuteReader())
+                    {
+                        return _sqlParser.ParseAddress(reader);
+                    }
+                }
+            }
+        }
+
+        public IEnumerable<Airline> GetAirline(string airlineID, string country, string airlineName)
+        {
+            using (var conn = new NpgsqlConnection(_connString))
+            {
+                conn.Open();
+
+                using (var cmd = new NpgsqlCommand())
+                {
+                    cmd.Connection = conn;
+                    cmd.CommandText = "SELECT * FROM airline WHERE airlineid = @airlineid AND country = @country AND airlinename = @airlinename";
+                    cmd.Parameters.AddWithValue("airlineid", airlineID);
+                    cmd.Parameters.AddWithValue("country", country);
+                    cmd.Parameters.AddWithValue("airlinename", airlineName);
+
+                    using (var reader = cmd.ExecuteReader())
+                    {
+                        return _sqlParser.ParseAirline(reader);
+                    }
+                }
+            }
+        }
+
+        public IEnumerable<Airport> GetAirport(string iataID, string country, string state)
+        {
+            using (var conn = new NpgsqlConnection(_connString))
+            {
+                conn.Open();
+
+                using (var cmd = new NpgsqlCommand())
+                {
+                    cmd.Connection = conn;
+                    cmd.CommandText = "SELECT * FROM airport WHERE iataid = @iataid AND country = @country AND state = @state";
+                    cmd.Parameters.AddWithValue("iataid", iataID);
+                    cmd.Parameters.AddWithValue("country", country);
+                    cmd.Parameters.AddWithValue("state", state);
+
+                    using (var reader = cmd.ExecuteReader())
+                    {
+                        return _sqlParser.ParseAirport(reader);
+                    }
+                }
+            }
+        }
+
+        public IEnumerable<Booking> GetBooking(long bookingID, string email, string ccNumber, string flightClass)
+        {
+            using (var conn = new NpgsqlConnection(_connString))
+            {
+                conn.Open();
+
+                using (var cmd = new NpgsqlCommand())
+                {
+                    cmd.Connection = conn;
+                    cmd.CommandText = "SELECT * FROM booking WHERE bookingid = @bookingid AND email = @email AND ccnumber = @ccnumber AND " +
+                        "flightclass = @flightclass";
+                    cmd.Parameters.AddWithValue("bookingid", bookingID);
+                    cmd.Parameters.AddWithValue("email", email);
+                    cmd.Parameters.AddWithValue("ccnumber", ccNumber);
+                    cmd.Parameters.AddWithValue("flightclass", flightClass);
+
+                    using (var reader = cmd.ExecuteReader())
+                    {
+                        return _sqlParser.ParseBooking(reader);
+                    }
+                }
+            }
+        }
+
+        public IEnumerable<CreditCard> GetCreditCard(string type, string ccNumber, string cardFirstName, string cardLastName, 
+            DateTime expirationDate, string cvc, long addressID)
+        {
+            using (var conn = new NpgsqlConnection(_connString))
+            {
+                conn.Open();
+
+                using (var cmd = new NpgsqlCommand())
+                {
+                    cmd.Connection = conn;
+                    cmd.CommandText = "SELECT * FROM creditcard WHERE type = @type AND ccnumber = @ccnumber AND cardfirstname = @cardfirstname" +
+                        "AND cardlastname = @cardlastname AND expirationdate = @expirationdate AND cvc = @cvc AND addressid = @addressid";
+                    cmd.Parameters.AddWithValue("type", type);
+                    cmd.Parameters.AddWithValue("ccnumber", ccNumber);
+                    cmd.Parameters.AddWithValue("cardfirstname", cardFirstName);
+                    cmd.Parameters.AddWithValue("cardlastname", cardLastName);
+					cmd.Parameters.AddWithValue("expirationdate", expirationDate);
+                    cmd.Parameters.AddWithValue("cvc", cvc);
+                    cmd.Parameters.AddWithValue("addressid", addressID);
+
+                    using (var reader = cmd.ExecuteReader())
+                    {
+                        return _sqlParser.ParseCreditCard(reader);
+                    }
+                }
+            }
+        }
+
+        public IEnumerable<Flight> GetFlight(DateTime date, int flightNumber, DateTime departureTime, DateTime arrivalTime, 
+            string departureAirport, string arrivalAirport, int maxCoach, int maxFirstClass, int bookedCoach, int bookedFirstClass)
+        {
+            using (var conn = new NpgsqlConnection(_connString))
+            {
+                conn.Open();
+
+                using (var cmd = new NpgsqlCommand())
+                {
+                    cmd.Connection = conn;
+                    cmd.CommandText = "SELECT * FROM flight WHERE date = @date AND flightnumber = @flightnumber AND departuretime = @departuretime AND" +
+                        "arrivaltime = @arrivaltime AND departureairport = @departureairport AND arrivalairport = @arrivalairport AND" +
+                        "maxcoach = @maxcoach AND maxfirstclass = @maxfirstclass AND bookedcoach = @bookedcoach AND bookedfirstclass = @bookedfirstclass";
+                    cmd.Parameters.AddWithValue("date", date);
+                    cmd.Parameters.AddWithValue("flightnumber", flightNumber);
+                    cmd.Parameters.AddWithValue("departuretime", departureTime);
+                    cmd.Parameters.AddWithValue("arrivaltime", arrivalTime);
+					cmd.Parameters.AddWithValue("departureairport", departureAirport);
+                    cmd.Parameters.AddWithValue("arrivalairport", arrivalAirport);
+                    cmd.Parameters.AddWithValue("maxcoach", maxCoach);
+                    cmd.Parameters.AddWithValue("maxfirstclass", maxFirstClass);
+                    cmd.Parameters.AddWithValue("bookedcoach", bookedCoach);
+                    cmd.Parameters.AddWithValue("bookedfirstclass", bookedFirstClass);
+
+                    using (var reader = cmd.ExecuteReader())
+                    {
+                        return _sqlParser.ParseFlight(reader);
+                    }
+                }
+            }
+        }
+
+        public IEnumerable<MileageProgram> GetMileageProgram(int miles, string email, string airline, long bookingID)
+        {
+            using (var conn = new NpgsqlConnection(_connString))
+            {
+                conn.Open();
+
+                using (var cmd = new NpgsqlCommand())
+                {
+                    cmd.Connection = conn;
+                    cmd.CommandText = "SELECT * FROM mileageprogram WHERE miles = @miles AND email = @email AND airline = @airline AND " +
+                        "bookingid = @bookingid";
+                    cmd.Parameters.AddWithValue("miles", miles);
+                    cmd.Parameters.AddWithValue("email", email);
+                    cmd.Parameters.AddWithValue("airline", airline);
+                    cmd.Parameters.AddWithValue("bookingid", bookingID);
+
+                    using (var reader = cmd.ExecuteReader())
+                    {
+                        return _sqlParser.ParseMileageProgram(reader);
+                    }
+                }
+            }
+        }
+
+        public IEnumerable<Price> GetPrice(string flightClass, decimal cost, DateTime date, int flightNumber, string airline)
+        {
+            using (var conn = new NpgsqlConnection(_connString))
+            {
+                conn.Open();
+
+                using (var cmd = new NpgsqlCommand())
+                {
+                    cmd.Connection = conn;
+                    cmd.CommandText = "SELECT * FROM price WHERE flightclass = @flightclass AND cost = @cost AND date = @date AND airline = @airline";
+                    cmd.Parameters.AddWithValue("", flightClass);
+                    cmd.Parameters.AddWithValue("cost", cost);
+                    cmd.Parameters.AddWithValue("date", date);
+                    cmd.Parameters.AddWithValue("", flightNumber);
+					cmd.Parameters.AddWithValue("airline", airline);
+
+                    using (var reader = cmd.ExecuteReader())
+                    {
+                        return _sqlParser.ParsePrice(reader);
+                    }
+                }
+            }
+        }
+                    #endregion
+
+                    #region SQL INSERTS
+                    #endregion
+
+                    #region SQL UPDATES
+                    #endregion
+
+                    #region SQL DELETES
+                    #endregion
+                }
 }
