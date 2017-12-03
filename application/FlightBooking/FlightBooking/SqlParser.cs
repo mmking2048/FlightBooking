@@ -112,16 +112,22 @@ namespace FlightBooking
         {
             var airports = new List<Airport>();
             var iataIDColumn = reader.GetOrdinal("iataid");
+            var airportNameColumn = reader.GetOrdinal("airportname");
             var countryColumn = reader.GetOrdinal("country");
             var stateColumn = reader.GetOrdinal("state");
+            var latitudeColumn = reader.GetOrdinal("latitude");
+            var longitudeColumn = reader.GetOrdinal("longitude");
 
             while (reader.Read())
             {
                 var iataID = reader.GetString(iataIDColumn);
+                var airportName = reader.GetString(airportNameColumn);
                 var country = reader.GetString(countryColumn);
                 var state = reader.GetString(stateColumn);
+                var latitude = reader.GetDouble(latitudeColumn);
+                var longitude = reader.GetDouble(longitudeColumn);
 
-                airports.Add(new Airport(iataID, country, state));
+                airports.Add(new Airport(iataID, airportName, country, state, latitude, longitude));
             }
 
             return airports;

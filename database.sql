@@ -4,6 +4,8 @@ CREATE TABLE Airport
   AirportName TEXT NOT NULL,
   Country TEXT NOT NULL,
   State CHAR(2),
+  Latitude NUMERIC NOT NULL,
+  Longitude NUMERIC NOT NULL,
   PRIMARY KEY (IATA_ID),
   -- State is only allowed to be null for non US and Canadian addresses
   CHECK (((Country = 'United States' OR Country = 'Canada') AND State IS NOT NULL OR (Country <> 'United States' AND Country <> 'Canada')))

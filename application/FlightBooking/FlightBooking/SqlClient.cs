@@ -93,7 +93,7 @@ namespace FlightBooking
             }
         }
 
-        public IEnumerable<Airport> GetAirport(string iataID, string country, string state)
+        public IEnumerable<Airport> GetAirport(string iataID, string airportName, string country, string state, double latitude, double longitude)
         {
             using (var conn = new NpgsqlConnection(_connString))
             {
@@ -102,10 +102,13 @@ namespace FlightBooking
                 using (var cmd = new NpgsqlCommand())
                 {
                     cmd.Connection = conn;
-                    cmd.CommandText = "SELECT * FROM airport WHERE iataid = @iataid AND country = @country AND state = @state";
+                    cmd.CommandText = "SELECT * FROM airport WHERE iataid = @iataid AND airportname = @airportname AND country = @country AND " +
+                        "state = @state AND latitude = @latitude AND longitude = @longitude";
                     cmd.Parameters.AddWithValue("iataid", iataID);
                     cmd.Parameters.AddWithValue("country", country);
                     cmd.Parameters.AddWithValue("state", state);
+                    cmd.Parameters.AddWithValue("latitude", latitude);
+                    cmd.Parameters.AddWithValue("longitude", longitude);
 
                     using (var reader = cmd.ExecuteReader())
                     {
