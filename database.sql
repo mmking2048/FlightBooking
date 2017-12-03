@@ -45,10 +45,10 @@ CREATE TABLE CreditCard
 
 CREATE TABLE Airline
 (
-  Airline CHAR(2) NOT NULL,
+  AirlineID CHAR(2) NOT NULL,
   Country TEXT NOT NULL,
   AirlineName TEXT NOT NULL,
-  PRIMARY KEY (Airline)
+  PRIMARY KEY (AirlineID)
 );
 
 CREATE TABLE Customer
@@ -81,13 +81,13 @@ CREATE TABLE Flight
   ArrivalTime TIMETZ(0) NOT NULL,
   DepartureAirport CHAR(3) NOT NULL,
   ArrivalAirport CHAR(3) NOT NULL,
-  Airline CHAR(2) NOT NULL,
+  AirlineID CHAR(2) NOT NULL,
   BookedCoach INT NOT NULL DEFAULT 0,
   BookedFirst INT NOT NULL DEFAULT 0,
-  PRIMARY KEY (Date, FlightNumber, Airline),
+  PRIMARY KEY (Date, FlightNumber, AirlineID),
   FOREIGN KEY (DepartureAirport) REFERENCES Airport(IATA_ID) ON UPDATE CASCADE,
   FOREIGN KEY (ArrivalAirport) REFERENCES Airport(IATA_ID) ON UPDATE CASCADE,
-  FOREIGN KEY (Airline) REFERENCES Airline(Airline) ON UPDATE CASCADE,
+  FOREIGN KEY (AirlineID) REFERENCES Airline(AirlineID) ON UPDATE CASCADE,
   CHECK (BookedCoach <= MaxCoach),
   CHECK (BookedFirst <= MaxFirstClass)
 );
@@ -98,9 +98,9 @@ CREATE TABLE Price
   Cost NUMERIC(7, 2) NOT NULL,
   Date DATE NOT NULL,
   FlightNumber INT NOT NULL,
-  Airline CHAR(2) NOT NULL,
-  PRIMARY KEY (FlightClass, Date, FlightNumber, Airline),
-  FOREIGN KEY (Date, FlightNumber, Airline) REFERENCES Flight(Date, FlightNumber, Airline) ON UPDATE CASCADE ON DELETE CASCADE
+  AirlineID CHAR(2) NOT NULL,
+  PRIMARY KEY (FlightClass, Date, FlightNumber, AirlineID),
+  FOREIGN KEY (Date, FlightNumber, AirlineID) REFERENCES Flight(Date, FlightNumber, AirlineID) ON UPDATE CASCADE ON DELETE CASCADE
 );
 
 CREATE TABLE CreditCardOwner
@@ -126,21 +126,21 @@ CREATE TABLE BookingFlights
   BookingID INT NOT NULL,
   Date DATE NOT NULL,
   FlightNumber INT NOT NULL,
-  Airline CHAR(2) NOT NULL,
+  AirlineID CHAR(2) NOT NULL,
   FlightClass VARCHAR(7) NOT NULL,
-  PRIMARY KEY (BookingID, Date, FlightNumber, Airline),
+  PRIMARY KEY (BookingID, Date, FlightNumber, AirlineID),
   FOREIGN KEY (BookingID) REFERENCES Booking(BookingID) ON UPDATE CASCADE ON DELETE CASCADE,
-  FOREIGN KEY (Date, FlightNumber, Airline) REFERENCES Flight(Date, FlightNumber, Airline) ON UPDATE CASCADE
+  FOREIGN KEY (Date, FlightNumber, AirlineID) REFERENCES Flight(Date, FlightNumber, AirlineID) ON UPDATE CASCADE
 );
 
 CREATE TABLE MileageProgram
 (
   Miles INT NOT NULL DEFAULT 0,
   Email TEXT NOT NULL,
-  Airline CHAR(2) NOT NULL,
+  AirlineID CHAR(2) NOT NULL,
   BookingID INT NOT NULL,
-  PRIMARY KEY (Email, Airline, BookingID),
+  PRIMARY KEY (Email, AirlineID, BookingID),
   FOREIGN KEY (Email) REFERENCES Customer(Email) ON UPDATE CASCADE,
-  FOREIGN KEY (Airline) REFERENCES Airline(Airline) ON UPDATE CASCADE,
+  FOREIGN KEY (AirlineID) REFERENCES Airline(AirlineID) ON UPDATE CASCADE,
   FOREIGN KEY (BookingID) REFERENCES Booking(BookingID) ON UPDATE CASCADE
 );
