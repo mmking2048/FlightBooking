@@ -18,6 +18,7 @@ namespace FlightBooking.Models
             AddressID = addressID;
         }
 
+        // TODO: input restrictions
         [DisplayName("Provider")]
         public string Type { get; set; }
         [DisplayName("Number")]
@@ -29,7 +30,9 @@ namespace FlightBooking.Models
         [DisplayName("Expiration")]
         [DisplayFormat(DataFormatString="{0:MM/yy}", ApplyFormatInEditMode = true)]
         public DateTime ExpirationDate { get; set; }
+        [DisplayName("CVC")]
         public string Cvc { get; set; }
+        // TODO: replace this with address object?
         public int AddressID { get; set; }
     }
 }
