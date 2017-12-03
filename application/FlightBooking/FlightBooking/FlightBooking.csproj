@@ -212,6 +212,7 @@
     <Content Include="Views\CreditCard\Delete.cshtml" />
     <Content Include="Views\CreditCard\Edit.cshtml" />
     <Content Include="Views\Address\Create.cshtml" />
+    <Content Include="Views\CreditCard\Create.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

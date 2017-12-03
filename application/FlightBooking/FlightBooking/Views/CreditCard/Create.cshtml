@@ -1,10 +1,10 @@
 ﻿@model FlightBooking.Models.CreditCard
 
 @{
-    ViewBag.Title = "Edit";
+    ViewBag.Title = "Create";
 }
 
-<h2>Edit</h2>
+<h2>Create</h2>
 
 
 @using (Html.BeginForm())
@@ -12,7 +12,7 @@
     @Html.AntiForgeryToken()
 
     <div class="form-horizontal">
-        <h4>Address</h4>
+        <h4>Credit Card</h4>
         <hr />
         @Html.ValidationSummary(true, "", new { @class = "text-danger" })
         @Html.HiddenFor(model => model.Type)
@@ -65,7 +65,7 @@
             </div>
         </div>
 
-        <!-- TODO: This needs to be a dropdown -->
+        <!-- TODO: This needs to be a dropdown with address info -->
         <div class="form-group">
             @Html.LabelFor(model => model.AddressID, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
