@@ -393,7 +393,7 @@ namespace FlightBooking
             }
         }
 
-        public void InsertBooking(string email, string ccNumber, string flightClass, IEnumerable<Flight> flights)
+        public int InsertBooking(string email, string ccNumber, string flightClass, IEnumerable<Flight> flights)
         {
             using (var conn = new NpgsqlConnection(_connString))
             {
@@ -421,6 +421,8 @@ namespace FlightBooking
                         cmd.Parameters.AddWithValue("airlineid", flight.AirlineID);
                         cmd.ExecuteNonQuery();
                     }
+
+                    return bookingID;
                 }
             }
         }
