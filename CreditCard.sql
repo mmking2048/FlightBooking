@@ -926,7 +926,6 @@ INSERT INTO CreditCard VALUES ('jcb',3320725173706823,'Tabb','Kauschke','2024-12
 INSERT INTO CreditCard VALUES ('jcb',4258500817862149,'Charil','Linge','2019-05-24',862,973);
 INSERT INTO CreditCard VALUES ('mastercard',2284822459544689,'Robinetta','Robson','2019-02-12',588,895);
 INSERT INTO CreditCard VALUES ('visa-electron',1299544840838057,'Eadmund','Loney','2021-02-25',531,540);
-INSERT INTO CreditCard VALUES ('bankcard',9533866417347973,'Tine','McLice','2019-08-21',883,1);
 INSERT INTO CreditCard VALUES ('china-unionpay',9287860963553666,'Cherice','Sparkwill','2021-12-19',778,1571);
 INSERT INTO CreditCard VALUES ('jcb',7273383861219888,'Jarvis','Wyant','2019-05-30',381,1278);
 INSERT INTO CreditCard VALUES ('jcb',3613784639573533,'Ruprecht','Utton','2022-11-27',411,889);
