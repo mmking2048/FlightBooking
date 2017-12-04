@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 
@@ -21,10 +22,12 @@ namespace FlightBooking.Models
         [DisplayName("CVC")]
         public string Cvc { get; set; }
         // TODO: replace this with address object?
-        public long AddressID { get; set; }
+        public int AddressID { get; set; }
+        // TODO: Add IEnumberable<Customer> since we said a credit card can have many owners?
+        public IEnumerable<Customer> Owners { get; set; }
 
         public CreditCard(string type, string ccNumber, string cardFirstName, string cardLastName, DateTime expirationDate,
-            string cvc, long addressID)
+            string cvc, int addressID)
         {
             Type = type;
             CcNumber = ccNumber;

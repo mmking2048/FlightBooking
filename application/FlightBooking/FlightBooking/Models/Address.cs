@@ -14,9 +14,10 @@ namespace FlightBooking.Models
         [DisplayName("Zip Code")]
         public string ZipCode { get; set; }
         public string Country { get; set; }
-        public long AddressID { get; set; }
+        public int AddressID { get; set; }
+        // TODO: Add IEnumberable<Customer> for the customers the address is home to?
 
-        public Address(int streetNumber, string streetName, string city, string state, string zipCode, string country, long addressID)
+        public Address(int streetNumber, string streetName, string city, string state, string zipCode, string country, int addressID)
         {
             StreetNumber = streetNumber;
             StreetName = streetName;
@@ -27,7 +28,7 @@ namespace FlightBooking.Models
             AddressID = addressID;
         }
         
-        public Address(int streetNumber, string streetName, string city, string country, long addressID)
+        public Address(int streetNumber, string streetName, string city, string country, int addressID)
         {
             StreetNumber = streetNumber;
             StreetName = streetName;

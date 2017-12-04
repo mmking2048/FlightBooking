@@ -20,7 +20,7 @@ namespace FlightBooking
 
         #region SQL SELECTS
 
-        public IEnumerable<Customer> GetCustomers(string email, string firstName, string lastName)
+        public IEnumerable<Customer> GetCustomer(string email, string firstName, string lastName, string iataID)
         {
             using (var conn = new NpgsqlConnection(_connString))
             {
@@ -30,10 +30,11 @@ namespace FlightBooking
                 {
                     cmd.Connection = conn;
                     cmd.CommandText =
-                        "SELECT * FROM customer WHERE email = @email AND firstname = @firstname AND lastname = @lastname";
+                        "SELECT * FROM customer WHERE email = @email AND firstname = @firstname AND lastname = @lastname AND iata_id = @iata_id";
                     cmd.Parameters.AddWithValue("email", email);
                     cmd.Parameters.AddWithValue("firstname", firstName);
                     cmd.Parameters.AddWithValue("lastname", lastName);
+                    cmd.Parameters.AddWithValue("iata_id", iataID);
 
                     using (var reader = cmd.ExecuteReader())
                     {
@@ -100,9 +101,9 @@ namespace FlightBooking
                 using (var cmd = new NpgsqlCommand())
                 {
                     cmd.Connection = conn;
-                    cmd.CommandText = "SELECT * FROM airport WHERE iataid = @iataid AND airportname = @airportname AND country = @country AND " +
+                    cmd.CommandText = "SELECT * FROM airport WHERE iata_id = @iata_id AND airportname = @airportname AND country = @country AND " +
                         "state = @state AND latitude = @latitude AND longitude = @longitude";
-                    cmd.Parameters.AddWithValue("iataid", iataID);
+                    cmd.Parameters.AddWithValue("iata_id", iataID);
                     cmd.Parameters.AddWithValue("country", country);
                     cmd.Parameters.AddWithValue("state", state);
                     cmd.Parameters.AddWithValue("latitude", latitude);
@@ -247,6 +248,33 @@ namespace FlightBooking
                 }
             }
         }
+
+        // TODO: GetCreditCardOwner
+        /*
+        public IEnumerable<Customer> GetCreditCardOwner(string email, string ccNumber)
+        {
+            using (var conn = new NpgsqlConnection(_connString))
+            {
+                conn.Open();
+
+                using (var cmd = new NpgsqlCommand())
+                {
+                    cmd.Connection = conn;
+                    cmd.CommandText = "SELECT * FROM creditcardowner WHERE email = @email AND ccnumber = @ccnumber";
+                    cmd.Parameters.AddWithValue("email", email);
+                    cmd.Parameters.AddWithValue("ccnumber", ccNumber);
+
+                    using (var reader = cmd.ExecuteReader())
+                    {
+                        return _sqlParser.ParseCreditCardOwner(reader);
+                    }
+                }
+            }
+        }
+        */
+        // TODO: GetLivesAt
+        // TODO: GetBookingFlights
+
         #endregion
 
         #region SQL INSERTS
@@ -261,11 +289,269 @@ namespace FlightBooking
                 {
                     cmd.Connection = conn;
                     cmd.CommandText =
-                        "INSERT INTO customer (email, firstname, lastname, iata_id) VALUES (@email, @firstname, @lastname, @iata_id);";
-                    cmd.Parameters.AddWithValue("email", email);
+                        "INSERT INTO customer (firstname, lastname, email, iata_id) VALUES (@firstname, @lastname, @email, @iata_id);";
                     cmd.Parameters.AddWithValue("firstname", firstName);
                     cmd.Parameters.AddWithValue("lastname", lastName);
+                    cmd.Parameters.AddWithValue("email", email);
                     cmd.Parameters.AddWithValue("iata_id", iataID);
+                    cmd.ExecuteNonQuery();
+                }
+            }
+        }
+
+        public void InsertAirport(string iataID, string airportName, string country, string state, double latitude, double longitude)
+        {
+            using (var conn = new NpgsqlConnection(_connString))
+            {
+                conn.Open();
+
+                using (var cmd = new NpgsqlCommand())
+                {
+                    cmd.Connection = conn;
+                    cmd.CommandText =
+                        "INSERT INTO airport (iata_id, airportname, country, state, latitude, longitude) " +
+                        "VALUES (@iata_id, @airportname, @country, @state, @latitude, @longitude);";
+                    cmd.Parameters.AddWithValue("iata_id", iataID);
+                    cmd.Parameters.AddWithValue("airportname", airportName);
+                    cmd.Parameters.AddWithValue("country", country);
+                    cmd.Parameters.AddWithValue("state", state);
+                    cmd.Parameters.AddWithValue("latitude", latitude);
+                    cmd.Parameters.AddWithValue("longitude", longitude);
+                    cmd.ExecuteNonQuery();
+                }
+            }
+        }
+
+        public long InsertAddress(int streetNumber, string streetName, string city, string state, string zipCode, string country)
+        {
+            using (var conn = new NpgsqlConnection(_connString))
+            {
+                long addressID;
+                conn.Open();
+
+                using (var cmd = new NpgsqlCommand())
+                {
+                    cmd.Connection = conn;
+                    cmd.CommandText =
+                        "INSERT INTO address (streetnumber, streetname, city, state, zipcode, country) " +
+                        "VALUES (@streetnumber, @streetname, @city, @state, @zipcode, @country) RETURNING addressid;";
+                    cmd.Parameters.AddWithValue("streetnumber", streetNumber);
+                    cmd.Parameters.AddWithValue("streetname", streetName);
+                    cmd.Parameters.AddWithValue("city", city);
+                    cmd.Parameters.AddWithValue("state", state);
+                    cmd.Parameters.AddWithValue("zipcode", zipCode);
+                    cmd.Parameters.AddWithValue("country", country);
+                    addressID = (long) cmd.ExecuteScalar();
+                }
+
+                return addressID;
+            }
+        }
+
+        public void InsertCreditCard(string type, string ccNumber, string cardFirstName, string cardLastName, DateTime expirationDate,
+            string cvc, long addressID)
+        {
+            using (var conn = new NpgsqlConnection(_connString))
+            {
+                conn.Open();
+
+                using (var cmd = new NpgsqlCommand())
+                {
+                    cmd.Connection = conn;
+                    cmd.CommandText =
+                        "INSERT INTO creditcard (type, ccnumber, cardfirstname, cardlastname, expirationdate, cvc, addressid) " +
+                        "VALUES (@type, @ccnumber, @cardfirstname, @cardlastname, @expirationdate, @cvc, @addressid);";
+                    cmd.Parameters.AddWithValue("type", type);
+                    cmd.Parameters.AddWithValue("ccnumber", ccNumber);
+                    cmd.Parameters.AddWithValue("cardfirstname", cardFirstName);
+                    cmd.Parameters.AddWithValue("cardlastname", cardLastName);
+                    cmd.Parameters.AddWithValue("expirationdate", expirationDate);
+                    cmd.Parameters.AddWithValue("cvc", cvc);
+                    cmd.Parameters.AddWithValue("addressid", addressID);
+                    cmd.ExecuteNonQuery();
+                }
+            }
+        }
+
+        public void InsertAirline(string airlineID, string country, string airlineName)
+        {
+            using (var conn = new NpgsqlConnection(_connString))
+            {
+                conn.Open();
+
+                using (var cmd = new NpgsqlCommand())
+                {
+                    cmd.Connection = conn;
+                    cmd.CommandText =
+                        "INSERT INTO airline (airlineid, country, airlinename) " +
+                        "VALUES (@airlineid, @country, @airlinename);";
+                    cmd.Parameters.AddWithValue("airlineid", airlineID);
+                    cmd.Parameters.AddWithValue("country", country);
+                    cmd.Parameters.AddWithValue("airlinename", airlineName);
+                    cmd.ExecuteNonQuery();
+                }
+            }
+        }
+
+        public void InsertBooking(string email, string ccNumber, string flightClass, IEnumerable<Flight> flights)
+        {
+            using (var conn = new NpgsqlConnection(_connString))
+            {
+                conn.Open();
+
+                using (var cmd = new NpgsqlCommand())
+                {
+                    cmd.Connection = conn;
+                    cmd.CommandText =
+                        "INSERT INTO booking (email, ccnumber, flightclass) " +
+                        "VALUES (@email, @ccnumber, @flightclass) RETURNING bookingid;";
+                    cmd.Parameters.AddWithValue("email", email);
+                    cmd.Parameters.AddWithValue("ccnumber", ccNumber);
+                    cmd.Parameters.AddWithValue("flightclass", flightClass);
+                    var bookingID = (int) cmd.ExecuteScalar();
+
+                    foreach (Flight flight in flights)
+                    {
+                        cmd.CommandText =
+                            "INSERT INTO bookingflights (bookingid, date, flightnumber, airlineid) " +
+                            "VALUES (@bookingid, @date, @flightnumber, @airlineid)";
+                        cmd.Parameters.AddWithValue("bookingid", bookingID);
+                        cmd.Parameters.AddWithValue("date", flight.Date);
+                        cmd.Parameters.AddWithValue("flightnumber", flight.FlightNumber);
+                        cmd.Parameters.AddWithValue("airlineid", flight.AirlineID);
+                        cmd.ExecuteNonQuery();
+                    }
+                }
+            }
+        }
+
+        public void InsertFlight(DateTime date, int flightNumber, DateTimeOffset departureTime,
+        DateTimeOffset arrivalTime, string departureAirport, string arrivalAirport,
+        int maxCoach, int maxFirstClass, string airlineID, int bookedCoach, int bookedFirstClass)
+        {
+            using (var conn = new NpgsqlConnection(_connString))
+            {
+                conn.Open();
+
+                using (var cmd = new NpgsqlCommand())
+                {
+                    cmd.Connection = conn;
+                    cmd.CommandText =
+                        "INSERT INTO flight (date, flightnumber, departuretime, arrivaltime, departureairport, maxcoach, maxfirstclass, airlineid, bookedcoach, bookedfirstclass) " +
+                        "VALUES (@date, @flightnumber, @departuretime, @departureairport, @arrivalairport, @maxcoach, @maxfirstclass, @airlineid, @bookedcoach, @bookedfirstclass);";
+                    cmd.Parameters.AddWithValue("date", date);
+                    cmd.Parameters.AddWithValue("flightnumber", flightNumber);
+                    cmd.Parameters.AddWithValue("departuretime", departureTime);
+                    cmd.Parameters.AddWithValue("arrivaltime", arrivalTime);
+                    cmd.Parameters.AddWithValue("departureairport", departureAirport);
+                    cmd.Parameters.AddWithValue("arrivalairport", arrivalAirport);
+                    cmd.Parameters.AddWithValue("maxcoach", maxCoach);
+                    cmd.Parameters.AddWithValue("maxfirstclass", maxFirstClass);
+                    cmd.Parameters.AddWithValue("airlineid", airlineID);
+                    cmd.Parameters.AddWithValue("bookedcoach", bookedCoach);
+                    cmd.Parameters.AddWithValue("bookedfirstclass", bookedFirstClass);
+                    cmd.ExecuteNonQuery();
+                }
+            }
+        }
+
+        public void InsertPrice(string flightClass, decimal cost, DateTime date, int flightNumber, string airline)
+        {
+            using (var conn = new NpgsqlConnection(_connString))
+            {
+                conn.Open();
+
+                using (var cmd = new NpgsqlCommand())
+                {
+                    cmd.Connection = conn;
+                    cmd.CommandText =
+                        "INSERT INTO price (flightclass, cost, flightnumber, airlineid) " +
+                        "VALUES (@flightclass, @cost, @flightnumber, @airlineid);";
+                    cmd.Parameters.AddWithValue("flightclass", flightClass);
+                    cmd.Parameters.AddWithValue("cost", cost);
+                    cmd.Parameters.AddWithValue("date", date);
+                    cmd.Parameters.AddWithValue("flightnumber", flightNumber);
+                    cmd.Parameters.AddWithValue("airlineid", airline);
+                    cmd.ExecuteNonQuery();
+                }
+            }
+        }
+
+        public void InsertCreditCardOwner(string email, string ccNumber)
+        {
+            using (var conn = new NpgsqlConnection(_connString))
+            {
+                conn.Open();
+
+                using (var cmd = new NpgsqlCommand())
+                {
+                    cmd.Connection = conn;
+                    cmd.CommandText =
+                        "INSERT INTO creditcardowner (email, ccnumber) " +
+                        "VALUES (@email, @ccnumber);";
+                    cmd.Parameters.AddWithValue("email", email);
+                    cmd.Parameters.AddWithValue("ccnumber", ccNumber);
+                    cmd.ExecuteNonQuery();
+                }
+            }
+        }
+
+        public void InsertLivesAt(string email, string addressID)
+        {
+            using (var conn = new NpgsqlConnection(_connString))
+            {
+                conn.Open();
+
+                using (var cmd = new NpgsqlCommand())
+                {
+                    cmd.Connection = conn;
+                    cmd.CommandText =
+                        "INSERT INTO livesat (email, addressid) " +
+                        "VALUES (@email, @addressid);";
+                    cmd.Parameters.AddWithValue("email", email);
+                    cmd.Parameters.AddWithValue("addressid", addressID);
+                    cmd.ExecuteNonQuery();
+                }
+            }
+        }
+
+        public void InsertBookingFlights(long bookingID, DateTime date, int flightNumber, string airlineID)
+        {
+            using (var conn = new NpgsqlConnection(_connString))
+            {
+                conn.Open();
+
+                using (var cmd = new NpgsqlCommand())
+                {
+                    cmd.Connection = conn;
+                    cmd.CommandText =
+                        "INSERT INTO bookingflights (bookingid, date, flightnumber, airlineid) " +
+                        "VALUES (@bookingid, @date, @flightnumber, @airlineid);";
+                    cmd.Parameters.AddWithValue("bookingid", bookingID);
+                    cmd.Parameters.AddWithValue("date", date);
+                    cmd.Parameters.AddWithValue("flightnumber", flightNumber);
+                    cmd.Parameters.AddWithValue("airlineid", airlineID);
+                    cmd.ExecuteNonQuery();
+                }
+            }
+        }
+
+        public void InsertMileageProgram(int miles, string email, string airlineID, int bookingID)
+        {
+            using (var conn = new NpgsqlConnection(_connString))
+            {
+                conn.Open();
+
+                using (var cmd = new NpgsqlCommand())
+                {
+                    cmd.Connection = conn;
+                    cmd.CommandText =
+                        "INSERT INTO mileageprogram (miles, email, airlineid, bookingid) " +
+                        "VALUES (@miles, @email, @airlineid, @bookingid);";
+                    cmd.Parameters.AddWithValue("miles", miles);
+                    cmd.Parameters.AddWithValue("email", email);
+                    cmd.Parameters.AddWithValue("airlineid", airlineID);
+                    cmd.Parameters.AddWithValue("bookingid", bookingID);
                     cmd.ExecuteNonQuery();
                 }
             }
