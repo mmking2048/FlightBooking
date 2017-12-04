@@ -12,7 +12,7 @@ namespace FlightBooking.ViewModels
         [DisplayName("Departure Date")]
         public DateTime DepartureDate { get; set; }
         [DisplayName("Return Date")]
-        public DateTime ReturnDate { get; set; }
+        public DateTime? ReturnDate { get; set; }
         [DisplayName("Round Trip")]
         public bool IsRoundTrip { get; set; }
         [DisplayName("Max Connections")]
