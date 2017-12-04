@@ -580,6 +580,183 @@ namespace FlightBooking
             }
         }
 
+        public void UpdateAirport(string iataID, string airportName, string country, string state, double latitude, double longitude)
+        {
+            using (var conn = new NpgsqlConnection(_connString))
+            {
+                conn.Open();
+
+                using (var cmd = new NpgsqlCommand())
+                {
+                    cmd.Connection = conn;
+                    cmd.CommandText =
+                        "UPDATE airport SET airportname = @airportname, country = @country, state = @state, latitude = @latitude, longitude = longitude@ WHERE iata_id = @iata_id;";
+                    cmd.Parameters.AddWithValue("airportname", airportName);
+                    cmd.Parameters.AddWithValue("country", country);
+                    cmd.Parameters.AddWithValue("state", state);
+                    cmd.Parameters.AddWithValue("latitude", latitude);
+					cmd.Parameters.AddWithValue("longitude", longitude);
+                    cmd.ExecuteNonQuery();
+                }
+            }
+        }
+
+        public void UpdateAddress(int streetNumber, string streetName, string city, string state, string zipCode, string country, int addressID)
+        {
+            using (var conn = new NpgsqlConnection(_connString))
+            {
+                conn.Open();
+
+                using (var cmd = new NpgsqlCommand())
+                {
+                    cmd.Connection = conn;
+                    cmd.CommandText =
+                        "UPDATE address SET  streetnumber= @streetnumber, streetname = @streetname, city = @city, state = @state, zipcode = @zipcode, country = @country WHERE addressid = @addressid;";
+                    cmd.Parameters.AddWithValue("streetnumber", streetNumber);
+                    cmd.Parameters.AddWithValue("streetname", streetName);
+                    cmd.Parameters.AddWithValue("city", city);
+                    cmd.Parameters.AddWithValue("state", state);
+					cmd.Parameters.AddWithValue("zipcode", zipCode);
+                    cmd.Parameters.AddWithValue("country", country);
+                    cmd.Parameters.AddWithValue("addressid", addressID);
+                    cmd.ExecuteNonQuery();
+                }
+            }
+        }
+
+        public void UpdateCreditCard(string type, string ccNumber, string cardFirstName, string cardLastName, DateTime expirationDate,
+            string cvc, int addressID)
+        {
+            using (var conn = new NpgsqlConnection(_connString))
+            {
+                conn.Open();
+
+                using (var cmd = new NpgsqlCommand())
+                {
+                    cmd.Connection = conn;
+                    cmd.CommandText =
+                        "UPDATE creditcard SET type = @type, cardfirstname = @cardfirstname, cardlastname = @cardlastname, expirationdate = @expirationdate, cvc = @cvc, addressid = @addressid WHERE ccnumber = @ccnumber;";
+                    cmd.Parameters.AddWithValue("type", type);
+                    cmd.Parameters.AddWithValue("cardfirstname", cardFirstName);
+                    cmd.Parameters.AddWithValue("cardlastname", cardLastName);
+                    cmd.Parameters.AddWithValue("expirationdate", expirationDate);
+					cmd.Parameters.AddWithValue("cvc", cvc);
+                    cmd.Parameters.AddWithValue("addressid", addressID);
+                    cmd.Parameters.AddWithValue("ccnumber", ccNumber);
+                    cmd.ExecuteNonQuery();
+                }
+            }
+        }
+
+        public void UpdateAirline(string airlineID, string country, string airlineName)
+        {
+            using (var conn = new NpgsqlConnection(_connString))
+            {
+                conn.Open();
+
+                using (var cmd = new NpgsqlCommand())
+                {
+                    cmd.Connection = conn;
+                    cmd.CommandText =
+                        "UPDATE airline SET country = @country, airlinename = @airlinename WHERE airlineid = @airlineid;";
+                    cmd.Parameters.AddWithValue("airlineid", airlineID);
+                    cmd.Parameters.AddWithValue("country", country);
+                    cmd.Parameters.AddWithValue("airlinename", airlineName);
+                    cmd.ExecuteNonQuery();
+                }
+            }
+        }
+
+        public void UpdateBooking(int bookingID, string email, string ccNumber, string flightClass)
+        {
+            using (var conn = new NpgsqlConnection(_connString))
+            {
+                conn.Open();
+
+                using (var cmd = new NpgsqlCommand())
+                {
+                    cmd.Connection = conn;
+                    cmd.CommandText =
+                        "UPDATE booking SET email = @email, ccnumber = @ccnumber, flightclass = @flightclass WHERE bookingid = @bookingid;";
+                    cmd.Parameters.AddWithValue("bookingid", bookingID);
+                    cmd.Parameters.AddWithValue("email", email);
+                    cmd.Parameters.AddWithValue("ccnumber", ccNumber);
+                    cmd.Parameters.AddWithValue("flightclass", flightClass);
+                    cmd.ExecuteNonQuery();
+                }
+            }
+        }
+
+        public void UpdateFlight(DateTime date, int flightNumber, DateTimeOffset departureTime, DateTimeOffset arrivalTime, string departureAirport, 
+            string arrivalAirport, int maxCoach, int maxFirstClass, string airlineID, int bookedCoach, int bookedFirstClass)
+        {
+            using (var conn = new NpgsqlConnection(_connString))
+            {
+                conn.Open();
+
+                using (var cmd = new NpgsqlCommand())
+                {
+                    cmd.Connection = conn;
+                    cmd.CommandText =
+                        "UPDATE flight SET departuretime = @departuretime, arrivaltime = @arrivaltime, departureairport = @departureairport, " +
+                        "arrivalairport = @arrivalairport, maxcoach = @maxcoach, maxfirstclass = @maxfirstclass, bookedcoach = @bookedcoach, bookedfirstclass = @bookedfirstclass" +
+                        "WHERE date = @date AND flightnumber = @flightnumber AND airlineid = @airlineid;";
+                    cmd.Parameters.AddWithValue("date", date);
+                    cmd.Parameters.AddWithValue("flightnumber", flightNumber);
+                    cmd.Parameters.AddWithValue("departuretime", departureTime);
+                    cmd.Parameters.AddWithValue("arrivaltime", arrivalTime);
+					cmd.Parameters.AddWithValue("departureairport", departureAirport);
+                    cmd.Parameters.AddWithValue("arrivalairport", arrivalAirport);
+                    cmd.Parameters.AddWithValue("maxcoach", maxCoach);
+                    cmd.Parameters.AddWithValue("maxfirstclass", maxFirstClass);
+					cmd.Parameters.AddWithValue("airlineid", airlineID);
+                    cmd.Parameters.AddWithValue("bookedcoach", bookedCoach);
+                    cmd.Parameters.AddWithValue("bookedfirstclass", bookedFirstClass);
+                    cmd.ExecuteNonQuery();
+                }
+            }
+        }
+
+        public void UpdatePrice(string flightClass, decimal cost, DateTime date, int flightNumber, string airline)
+        {
+            using (var conn = new NpgsqlConnection(_connString))
+            {
+                conn.Open();
+
+                using (var cmd = new NpgsqlCommand())
+                {
+                    cmd.Connection = conn;
+                    cmd.CommandText =
+                        "UPDATE price SET cost = @cost WHERE flightclass = @flightclass AND date = @date AND flightnumber = @flightnumber AND airlineid = @airlineid;";
+                    cmd.Parameters.AddWithValue("flightclass", flightClass);
+                    cmd.Parameters.AddWithValue("cost", cost);
+                    cmd.Parameters.AddWithValue("date", date);
+                    cmd.Parameters.AddWithValue("flightnumber", flightNumber);
+					cmd.Parameters.AddWithValue("airlineid", airline);
+                    cmd.ExecuteNonQuery();
+                }
+            }
+        }
+
+        public void UpdateMileageProgram(int miles, string email, string airline, int bookingID)
+        {
+            using (var conn = new NpgsqlConnection(_connString))
+            {
+                conn.Open();
+
+                using (var cmd = new NpgsqlCommand())
+                {
+                    cmd.Connection = conn;
+                    cmd.CommandText =
+                        "UPDATE mileageprogram SET miles = @miles WHERE email = @email AND airlineid = @airlineid AND bookingid = @bookingid;";
+                    cmd.Parameters.AddWithValue("miles", miles);
+                    cmd.Parameters.AddWithValue("email", email);
+                    cmd.Parameters.AddWithValue("airlineid", airline);
+                    cmd.Parameters.AddWithValue("bookingid", bookingID);
+                    cmd.ExecuteNonQuery();
+                }
+            }
+        }
         #endregion
 
         #region SQL DELETES
