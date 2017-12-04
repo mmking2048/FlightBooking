@@ -6,18 +6,6 @@ namespace FlightBooking.Models
 {
     public class CreditCard
     {
-        public CreditCard(string type, string ccNumber, string cardFirstName, string cardLastName,
-            DateTime expirationDate, string cvc, int addressID)
-        {
-            Type = type;
-            CcNumber = ccNumber;
-            CardFirstName = cardFirstName;
-            CardLastName = cardLastName;
-            ExpirationDate = expirationDate;
-            Cvc = cvc;
-            AddressID = addressID;
-        }
-
         // TODO: input restrictions
         [DisplayName("Provider")]
         public string Type { get; set; }

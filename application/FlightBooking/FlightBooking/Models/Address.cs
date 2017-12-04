@@ -4,17 +4,6 @@ namespace FlightBooking.Models
 {
     public class Address
     {
-        public Address(int streetNumber, string streetName, string city, string state, string zipCode, string country, int addressID)
-        {
-            StreetNumber = streetNumber;
-            StreetName = streetName;
-            City = city;
-            State = state;
-            ZipCode = zipCode;
-            Country = country;
-            AddressID = addressID;
-        }
-
         // TODO: Add constraints to allowed values
         [DisplayName("Street Number")]
         public int StreetNumber { get; set; }
@@ -27,12 +16,22 @@ namespace FlightBooking.Models
         public string Country { get; set; }
         public long AddressID { get; set; }
 
-        public Address(int streetNumber, string streetName, string city, string zipCode, string country, long addressID)
+        public Address(int streetNumber, string streetName, string city, string state, string zipCode, string country, long addressID)
         {
             StreetNumber = streetNumber;
             StreetName = streetName;
             City = city;
+            State = state;
             ZipCode = zipCode;
+            Country = country;
+            AddressID = addressID;
+        }
+        
+        public Address(int streetNumber, string streetName, string city, string country, long addressID)
+        {
+            StreetNumber = streetNumber;
+            StreetName = streetName;
+            City = city;
             Country = country;
             AddressID = addressID;
         }
