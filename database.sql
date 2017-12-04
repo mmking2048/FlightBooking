@@ -145,5 +145,6 @@ CREATE TABLE MileageProgram
   PRIMARY KEY (Email, AirlineID, BookingID),
   FOREIGN KEY (Email) REFERENCES Customer(Email) ON UPDATE CASCADE,
   FOREIGN KEY (AirlineID) REFERENCES Airline(AirlineID) ON UPDATE CASCADE,
+  -- TODO: Do we actually need BookingID? As long as we add miles while booking a flight, we don't need it
   FOREIGN KEY (BookingID) REFERENCES Booking(BookingID) ON UPDATE CASCADE
 );

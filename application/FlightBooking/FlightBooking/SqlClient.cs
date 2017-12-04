@@ -778,6 +778,204 @@ namespace FlightBooking
             }
         }
 
+        public void DeleteAirport(string iataID)
+        {
+            using (var conn = new NpgsqlConnection(_connString))
+            {
+                conn.Open();
+
+                using (var cmd = new NpgsqlCommand())
+                {
+                    cmd.Connection = conn;
+                    cmd.CommandText =
+                        "DELETE FROM airport WHERE iata_id = @iata_id;";
+                    cmd.Parameters.AddWithValue("iata_id", iataID);
+                    cmd.ExecuteNonQuery();
+                }
+            }
+        }
+
+        public void DeleteAddress(int addressID)
+        {
+            using (var conn = new NpgsqlConnection(_connString))
+            {
+                conn.Open();
+
+                using (var cmd = new NpgsqlCommand())
+                {
+                    cmd.Connection = conn;
+                    cmd.CommandText =
+                        "DELETE FROM address WHERE addressid = @addressid;";
+                    cmd.Parameters.AddWithValue("addressid", addressID);
+                    cmd.ExecuteNonQuery();
+                }
+            }
+        }
+
+        public void DeleteCreditCard(string ccNumber)
+        {
+            using (var conn = new NpgsqlConnection(_connString))
+            {
+                conn.Open();
+
+                using (var cmd = new NpgsqlCommand())
+                {
+                    cmd.Connection = conn;
+                    cmd.CommandText =
+                        "DELETE FROM creditcard WHERE ccnumber = @ccnumber;";
+                    cmd.Parameters.AddWithValue("ccnumber", ccNumber);
+                    cmd.ExecuteNonQuery();
+                }
+            }
+        }
+
+        public void DeleteAirline(string airlineID)
+        {
+            using (var conn = new NpgsqlConnection(_connString))
+            {
+                conn.Open();
+
+                using (var cmd = new NpgsqlCommand())
+                {
+                    cmd.Connection = conn;
+                    cmd.CommandText =
+                        "DELETE FROM airline WHERE airlineid = @airlineid;";
+                    cmd.Parameters.AddWithValue("airlineid", airlineID);
+                    cmd.ExecuteNonQuery();
+                }
+            }
+        }
+
+        public void DeleteBooking(int bookingID)
+        {
+            using (var conn = new NpgsqlConnection(_connString))
+            {
+                conn.Open();
+
+                using (var cmd = new NpgsqlCommand())
+                {
+                    cmd.Connection = conn;
+                    cmd.CommandText =
+                        "DELETE FROM booking WHERE bookingid = @bookingid AND  = @ AND  = @ AND  = @;";
+                    cmd.Parameters.AddWithValue("bookingid", bookingID);
+                    cmd.ExecuteNonQuery();
+                }
+            }
+        }
+
+        public void DeleteFlight(DateTime date, int flightNumber, string airlineID)
+        {
+            using (var conn = new NpgsqlConnection(_connString))
+            {
+                conn.Open();
+
+                using (var cmd = new NpgsqlCommand())
+                {
+                    cmd.Connection = conn;
+                    cmd.CommandText =
+                        "DELETE FROM flight WHERE date = @date AND flightnumber = @flightnumber AND airlineid = @airlineid;";
+                    cmd.Parameters.AddWithValue("date", date);
+					cmd.Parameters.AddWithValue("flightnumber", flightNumber);
+					cmd.Parameters.AddWithValue("airlineid", airlineID);
+                    cmd.ExecuteNonQuery();
+                }
+            }
+        }
+
+        public void DeletePrice(string flightClass, DateTime date, int flightNumber, string airline)
+        {
+            using (var conn = new NpgsqlConnection(_connString))
+            {
+                conn.Open();
+
+                using (var cmd = new NpgsqlCommand())
+                {
+                    cmd.Connection = conn;
+                    cmd.CommandText =
+                        "DELETE FROM price WHERE flightclass = @flightclass AND date = @date AND flightnumber = @flightnumber AND airlineid = @airlineid;";
+                    cmd.Parameters.AddWithValue("flightclass", flightClass);
+					cmd.Parameters.AddWithValue("date", date);
+					cmd.Parameters.AddWithValue("flightnumber", flightNumber);
+					cmd.Parameters.AddWithValue("airlineid", airline);
+                    cmd.ExecuteNonQuery();
+                }
+            }
+        }
+
+        public void DeleteCreditCardOwner(string email, string ccNumber)
+        {
+            using (var conn = new NpgsqlConnection(_connString))
+            {
+                conn.Open();
+
+                using (var cmd = new NpgsqlCommand())
+                {
+                    cmd.Connection = conn;
+                    cmd.CommandText =
+                        "DELETE FROM creditcardowner WHERE email = @email AND ccnumber = @ccnumber;";
+                    cmd.Parameters.AddWithValue("email", email);
+					cmd.Parameters.AddWithValue("ccnumber", ccNumber);
+                    cmd.ExecuteNonQuery();
+                }
+            }
+        }
+
+        public void DeleteLivesAt(string email, int addressID)
+        {
+            using (var conn = new NpgsqlConnection(_connString))
+            {
+                conn.Open();
+
+                using (var cmd = new NpgsqlCommand())
+                {
+                    cmd.Connection = conn;
+                    cmd.CommandText =
+                        "DELETE FROM livesat WHERE email = @email AND addressid = @addressid AND  = @ AND  = @;";
+                    cmd.Parameters.AddWithValue("email", email);
+					cmd.Parameters.AddWithValue("addressid", addressID);
+                    cmd.ExecuteNonQuery();
+                }
+            }
+        }
+
+        public void DeleteBookingFlights(int bookingID, DateTime date, int FlightNumber, string airlineID)
+        {
+            using (var conn = new NpgsqlConnection(_connString))
+            {
+                conn.Open();
+
+                using (var cmd = new NpgsqlCommand())
+                {
+                    cmd.Connection = conn;
+                    cmd.CommandText =
+                        "DELETE FROM bookingflights WHERE bookingid = @bookingid AND date = @date AND flightnumber = @flightnumber AND airlineid = @airlineid;";
+                    cmd.Parameters.AddWithValue("bookingid", bookingID);
+					cmd.Parameters.AddWithValue("date", date);
+					cmd.Parameters.AddWithValue("flightnumber", FlightNumber);
+					cmd.Parameters.AddWithValue("airlineid", airlineID);
+                    cmd.ExecuteNonQuery();
+                }
+            }
+        }
+
+        public void DeleteMileageProgram(string email, string airlineID, int bookingID)
+        {
+            using (var conn = new NpgsqlConnection(_connString))
+            {
+                conn.Open();
+
+                using (var cmd = new NpgsqlCommand())
+                {
+                    cmd.Connection = conn;
+                    cmd.CommandText =
+                        "DELETE FROM mileageprogram WHERE email = @email AND airlineid = @airlineid AND bookingid = @bookingid;";
+                    cmd.Parameters.AddWithValue("email", email);
+					cmd.Parameters.AddWithValue("airlineid", airlineID);
+					cmd.Parameters.AddWithValue("bookingid", bookingID);
+                    cmd.ExecuteNonQuery();
+                }
+            }
+        }
         #endregion
      }
 }
