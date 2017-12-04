@@ -101,3 +101,6 @@ _[Ss]cripts
 *.dot[Cc]over
 /application/FlightBooking/.vs/FlightBooking/v15/Server/sqlite3/storage.ide-shm
 /application/FlightBooking/.vs/FlightBooking/v15/Server/sqlite3/storage.ide-wal
+.vs/VSWorkspaceState.json
+/application/FlightBooking/.vs/config/applicationhost.config
+/application/FlightBooking/.vs/FlightBooking/v15/Server/sqlite3/storage.ide
