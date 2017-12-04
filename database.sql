@@ -66,9 +66,11 @@ CREATE TABLE Booking
   BookingID SERIAL NOT NULL,
   Email TEXT NOT NULL,
   CCNumber CHAR(16) NOT NULL,
+  FlightClass CHAR(5) NOT NULL,
   PRIMARY KEY (BookingID),
   FOREIGN KEY (Email) REFERENCES Customer(Email) ON UPDATE CASCADE,
-  FOREIGN KEY (CCNumber) REFERENCES CreditCard(CCNumber) ON UPDATE CASCADE
+  FOREIGN KEY (CCNumber) REFERENCES CreditCard(CCNumber) ON UPDATE CASCADE,
+  CHECK (FlightClass IN ('First', 'Coach'))
 );
 
 CREATE TABLE Flight
@@ -89,18 +91,20 @@ CREATE TABLE Flight
   FOREIGN KEY (ArrivalAirport) REFERENCES Airport(IATA_ID) ON UPDATE CASCADE,
   FOREIGN KEY (AirlineID) REFERENCES Airline(AirlineID) ON UPDATE CASCADE,
   CHECK (BookedCoach <= MaxCoach),
-  CHECK (BookedFirst <= MaxFirstClass)
+  CHECK (BookedFirst <= MaxFirstClass),
+  CHECK (DepartureTime < ArrivalTime)
 );
 
 CREATE TABLE Price
 (
-  FlightClass VARCHAR(7) NOT NULL,
+  FlightClass CHAR(5) NOT NULL,
   Cost NUMERIC(7, 2) NOT NULL,
   Date DATE NOT NULL,
   FlightNumber INT NOT NULL,
   AirlineID CHAR(2) NOT NULL,
   PRIMARY KEY (FlightClass, Date, FlightNumber, AirlineID),
-  FOREIGN KEY (Date, FlightNumber, AirlineID) REFERENCES Flight(Date, FlightNumber, AirlineID) ON UPDATE CASCADE ON DELETE CASCADE
+  FOREIGN KEY (Date, FlightNumber, AirlineID) REFERENCES Flight(Date, FlightNumber, AirlineID) ON UPDATE CASCADE ON DELETE CASCADE,
+  CHECK (FlightClass IN ('First', 'Coach'))
 );
 
 CREATE TABLE CreditCardOwner
@@ -127,7 +131,6 @@ CREATE TABLE BookingFlights
   Date DATE NOT NULL,
   FlightNumber INT NOT NULL,
   AirlineID CHAR(2) NOT NULL,
-  FlightClass VARCHAR(7) NOT NULL,
   PRIMARY KEY (BookingID, Date, FlightNumber, AirlineID),
   FOREIGN KEY (BookingID) REFERENCES Booking(BookingID) ON UPDATE CASCADE ON DELETE CASCADE,
   FOREIGN KEY (Date, FlightNumber, AirlineID) REFERENCES Flight(Date, FlightNumber, AirlineID) ON UPDATE CASCADE
