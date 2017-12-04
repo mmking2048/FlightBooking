@@ -27,7 +27,8 @@
             <td>@Html.DisplayFor(modelItem => booking.TotalLength)</td>
             <td>@Html.DisplayFor(modelItem => booking.DepartureTime)</td>
             <td>@Html.DisplayFor(modelItem => booking.ArrivalTime)</td>
-            <td colspan="4"></td>
+            <td colspan="3"></td>
+            <td>@Html.ActionLink("Book", "Book", "Bookings")</td>
         </tr>
 
         <tbody id="@("collapse" + i)" class="collapse">
