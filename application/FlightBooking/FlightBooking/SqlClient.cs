@@ -44,7 +44,7 @@ namespace FlightBooking
             }
         }
 
-        public IEnumerable<Address> GetAddress(int streetNumber, string streetName, string city, string zipCode, string country, long addressID)
+        public IEnumerable<Address> GetAddress(int streetNumber, string streetName, string city, string zipCode, string country, int addressID)
         {
             using (var conn = new NpgsqlConnection(_connString))
             {
@@ -117,7 +117,7 @@ namespace FlightBooking
             }
         }
 
-        public IEnumerable<Booking> GetBooking(long bookingID, string email, string ccNumber, string flightClass)
+        public IEnumerable<Booking> GetBooking(int bookingID, string email, string ccNumber, string flightClass)
         {
             using (var conn = new NpgsqlConnection(_connString))
             {
@@ -142,7 +142,7 @@ namespace FlightBooking
         }
 
         public IEnumerable<CreditCard> GetCreditCard(string type, string ccNumber, string cardFirstName, string cardLastName, 
-            DateTime expirationDate, string cvc, long addressID)
+            DateTime expirationDate, string cvc, int addressID)
         {
             using (var conn = new NpgsqlConnection(_connString))
             {
@@ -201,7 +201,7 @@ namespace FlightBooking
             }
         }
 
-        public IEnumerable<MileageProgram> GetMileageProgram(int miles, string email, string airline, long bookingID)
+        public IEnumerable<MileageProgram> GetMileageProgram(int miles, string email, string airline, int bookingID)
         {
             using (var conn = new NpgsqlConnection(_connString))
             {
@@ -322,11 +322,11 @@ namespace FlightBooking
             }
         }
 
-        public long InsertAddress(int streetNumber, string streetName, string city, string state, string zipCode, string country)
+        public int InsertAddress(int streetNumber, string streetName, string city, string state, string zipCode, string country)
         {
             using (var conn = new NpgsqlConnection(_connString))
             {
-                long addressID;
+                int addressID;
                 conn.Open();
 
                 using (var cmd = new NpgsqlCommand())
@@ -341,7 +341,7 @@ namespace FlightBooking
                     cmd.Parameters.AddWithValue("state", state);
                     cmd.Parameters.AddWithValue("zipcode", zipCode);
                     cmd.Parameters.AddWithValue("country", country);
-                    addressID = (long) cmd.ExecuteScalar();
+                    addressID = (int) cmd.ExecuteScalar();
                 }
 
                 return addressID;
@@ -349,7 +349,7 @@ namespace FlightBooking
         }
 
         public void InsertCreditCard(string type, string ccNumber, string cardFirstName, string cardLastName, DateTime expirationDate,
-            string cvc, long addressID)
+            string cvc, int addressID)
         {
             using (var conn = new NpgsqlConnection(_connString))
             {
@@ -515,7 +515,7 @@ namespace FlightBooking
             }
         }
 
-        public void InsertBookingFlights(long bookingID, DateTime date, int flightNumber, string airlineID)
+        public void InsertBookingFlights(int bookingID, DateTime date, int flightNumber, string airlineID)
         {
             using (var conn = new NpgsqlConnection(_connString))
             {
