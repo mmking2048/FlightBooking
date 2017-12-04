@@ -25,8 +25,8 @@ namespace FlightBooking.Controllers
                 {
                     // TODO: database search for flights
                     var booking = new Booking(1, "ab@email.com", "1111000011110000", "Coach");
-                    var flight1 = new Flight(DateTime.Now, 1, DateTimeOffset.Now, DateTimeOffset.Now + TimeSpan.FromHours(3), "ORD", "MIA", 10, 10, 0, 0);
-                    var flight2 = new Flight(DateTime.Now, 2, DateTimeOffset.Now + TimeSpan.FromHours(4), DateTimeOffset.Now + TimeSpan.FromHours(12), "MIA", "FCO", 10, 10, 0, 0);
+                    var flight1 = new Flight(DateTime.Now, 1, DateTimeOffset.Now, DateTimeOffset.Now + TimeSpan.FromHours(3), "ORD", "MIA", 10, 10, "AA", 0, 0);
+                    var flight2 = new Flight(DateTime.Now, 2, DateTimeOffset.Now + TimeSpan.FromHours(4), DateTimeOffset.Now + TimeSpan.FromHours(12), "MIA", "FCO", 10, 10, "BA", 0, 0);
                     flight1.Prices = new[]
                     {
                         new Price("Coach", 110.00M, DateTime.Now, 1, "AA"),

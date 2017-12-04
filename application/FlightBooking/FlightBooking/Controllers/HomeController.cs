@@ -7,7 +7,6 @@ namespace FlightBooking.Controllers
         public ActionResult Index()
         {
             var client = new SqlClient(new SqlParser());
-            var customers = client.GetCustomers("ab@email.com", "A", "B");
             return View();
         }
     }
