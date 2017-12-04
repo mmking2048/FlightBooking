@@ -36,6 +36,7 @@ namespace FlightBooking
             var arrivalTimeColumn = reader.GetOrdinal("arrivaltime");
             var departureAirportColumn = reader.GetOrdinal("departureairport");
             var arrivalAirportColumn = reader.GetOrdinal("arrivalairport");
+            var airlineIDColumn = reader.GetOrdinal("arrivalid");
             var maxCoachColumn = reader.GetOrdinal("maxcoach");
             var maxFirstClassColumn = reader.GetOrdinal("maxfirstclass");
             var bookedCoachColumn = reader.GetOrdinal("bookedcoach");
@@ -49,13 +50,14 @@ namespace FlightBooking
                 var arrivalTime = reader.GetDateTime(arrivalTimeColumn);
                 var departureAirport = reader.GetString(departureAirportColumn);
                 var arrivalAirport = reader.GetString(arrivalAirportColumn);
+                var airlineID = reader.GetString(airlineIDColumn);
                 var maxCoach = reader.GetInt16(maxCoachColumn);
                 var maxFirstClass = reader.GetInt16(maxFirstClassColumn);
                 var bookedCoach = reader.GetInt16(bookedCoachColumn);
                 var bookedFirstClass = reader.GetInt16(bookedFirstClassColumn);
 
                 flights.Add(new Flight(date, flightNumber, departureTime, arrivalTime, departureAirport,
-                    arrivalAirport, maxCoach, maxFirstClass, bookedCoach, bookedFirstClass));
+                    arrivalAirport, maxCoach, maxFirstClass, airlineID, bookedCoach, bookedFirstClass));
             }
 
             return flights;
@@ -67,6 +69,7 @@ namespace FlightBooking
             var streetNumberColumn = reader.GetOrdinal("streetnumber");
             var streetNameColumn = reader.GetOrdinal("streetname");
             var cityColumn = reader.GetOrdinal("city");
+            var stateColumn = reader.GetOrdinal("state");
             var zipCodeColumn = reader.GetOrdinal("zipcode");
             var countryColumn = reader.GetOrdinal("country");
             var addressIDColumn = reader.GetOrdinal("addressid");
@@ -76,11 +79,12 @@ namespace FlightBooking
                 var streetNumber = reader.GetInt16(streetNumberColumn);
                 var streetName = reader.GetString(streetNameColumn);
                 var city = reader.GetString(cityColumn);
+                var state = reader.GetString(stateColumn);
                 var zipCode = reader.GetString(zipCodeColumn);
                 var country = reader.GetString(countryColumn);
-                var addressID = reader.GetInt64(addressIDColumn);
+                var addressID = reader.GetInt32(addressIDColumn);
 
-                addresses.Add(new Address(streetNumber, streetName, city, zipCode, country, addressID));
+                addresses.Add(new Address(streetNumber, streetName, city, state, zipCode, country, addressID));
             }
 
             return addresses;
@@ -149,7 +153,7 @@ namespace FlightBooking
                 var cardLastName = reader.GetString(cardLastNameColumn);
                 var expirationDate = reader.GetDateTime(expirationDateColumn);
                 var cvc = reader.GetString(cvcColumn);
-                var addressID = reader.GetInt64(addressIDColumn);
+                var addressID = reader.GetInt32(addressIDColumn);
 
                 creditCards.Add(new CreditCard(type, ccNumber, cardFirstName, cardLastName, expirationDate, cvc, addressID));
             }
@@ -170,7 +174,7 @@ namespace FlightBooking
                 var miles = reader.GetInt32(milesColumn);
                 var email = reader.GetString(emailColumn);
                 var airline = reader.GetString(airlineColumn);
-                var bookingID = reader.GetInt64(bookingIDColumn);
+                var bookingID = reader.GetInt32(bookingIDColumn);
 
                 mileagePrograms.Add(new MileageProgram(miles, email, airline, bookingID));
             }
@@ -210,7 +214,7 @@ namespace FlightBooking
 
             while (reader.Read())
             {
-                var bookingID = reader.GetInt64(bookingIDColumn);
+                var bookingID = reader.GetInt32(bookingIDColumn);
                 var email = reader.GetString(emailColumn);
                 var ccNumber = reader.GetString(ccNumberColumn);
                 var flightClass = reader.GetString(flightClassColumn);
@@ -220,5 +224,27 @@ namespace FlightBooking
 
             return bookings;
         }
+
+        /*
+        public IEnumerable< TODO > ParseCreditCardOwner(NpgsqlDataReader reader)
+        {
+            var owners = new List< TODO >();
+            var emailColumn = reader.GetOrdinal("email");
+            var ccNumberColumn = reader.GetOrdinal("ccnumber");
+
+            while (reader.Read())
+            {
+                var email = reader.GetString(emailColumn);
+                var ccNumber = reader.GetString(ccNumberColumn);
+
+                owners.Add(new Customer(email, ccNumber));
+            }
+
+            return owners;
+        }
+        */
+        // TODO: ParseCreditCardOwner
+        // TODO: ParseLivesAt
+        // TODO: ParseBookingFlights
     }
 }
