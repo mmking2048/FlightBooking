@@ -22,6 +22,7 @@ namespace FlightBooking.Controllers
         {
             // TODO: database search for login
             // TODO: create new customer if necessary
+            // TODO: set a cookie for login stuff
 
             // TODO: database delete
             return RedirectToAction("Index");
