@@ -44,6 +44,26 @@ namespace FlightBooking
             }
         }
 
+        public IEnumerable<Address> GetAddress(int addressID)
+        {
+            using (var conn = new NpgsqlConnection(_connString))
+            {
+                conn.Open();
+
+                using (var cmd = new NpgsqlCommand())
+                {
+                    cmd.Connection = conn;
+                    cmd.CommandText = "SELECT * FROM address WHERE addressid = @addressid";
+                    cmd.Parameters.AddWithValue("addressid", addressID);
+
+                    using (var reader = cmd.ExecuteReader())
+                    {
+                        return _sqlParser.ParseAddress(reader);
+                    }
+                }
+            }
+        }
+
         public IEnumerable<Address> GetAddress(int streetNumber, string streetName, string city, string zipCode, string country, int addressID)
         {
             using (var conn = new NpgsqlConnection(_connString))

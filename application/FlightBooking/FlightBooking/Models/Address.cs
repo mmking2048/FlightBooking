@@ -17,6 +17,8 @@ namespace FlightBooking.Models
         public int AddressID { get; set; }
         // TODO: Add IEnumberable<Customer> for the customers the address is home to?
 
+        public Address() { }
+
         public Address(int streetNumber, string streetName, string city, string state, string zipCode, string country, int addressID)
         {
             StreetNumber = streetNumber;

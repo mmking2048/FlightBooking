@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Net;
 using System.Web.Mvc;
 using FlightBooking.Models;
@@ -24,11 +25,14 @@ namespace FlightBooking.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Create([Bind(Include = "StreetNumber,StreetName,City,ZipCode,Country")] Address address)
         {
+            var client = new SqlClient(new SqlParser());
+
             try
             {
                 if (ModelState.IsValid)
                 {
-                    // TODO: database insert
+                    client.InsertAddress(address.StreetNumber, address.StreetName, address.City, address.State,
+                        address.ZipCode, address.Country);
                     return RedirectToAction("Index", "Account");
                 }
             }
@@ -43,12 +47,13 @@ namespace FlightBooking.Controllers
 
         public ActionResult Edit(int? id)
         {
+            var client = new SqlClient(new SqlParser());
+
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            // TODO: database search for address
-            var address = new Address(111, "Street", "Chicago", "IL", "60600", "United States", 1);
+            var address = client.GetAddress(id.Value).First();
 
             if (address == null)
             {
