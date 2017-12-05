@@ -220,6 +220,8 @@
     <Content Include="Views\FlightSearch\Search.cshtml" />
     <Content Include="Views\FlightSearch\Results.cshtml" />
     <Content Include="Views\Bookings\Book.cshtml" />
+    <Content Include="Views\Bookings\Index.cshtml" />
+    <None Include="Views\Bookings\Cancel.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
