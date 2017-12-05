@@ -172,6 +172,7 @@
     <Compile Include="SqlParser.cs" />
     <Compile Include="ViewModels\FlightConnectionViewModel.cs" />
     <Compile Include="ViewModels\FlightSearchViewModel.cs" />
+    <Compile Include="ViewModels\LoginViewModel.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\bootstrap.css" />
@@ -221,6 +222,7 @@
     <Content Include="Views\FlightSearch\Results.cshtml" />
     <Content Include="Views\Bookings\Book.cshtml" />
     <Content Include="Views\Bookings\Index.cshtml" />
+    <Content Include="Views\Account\Login.cshtml" />
     <None Include="Views\Bookings\Cancel.cshtml" />
   </ItemGroup>
   <ItemGroup>
