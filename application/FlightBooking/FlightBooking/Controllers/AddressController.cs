@@ -8,6 +8,9 @@ namespace FlightBooking.Controllers
 {
     public class AddressController : Controller
     {
+        private static readonly SqlParser Parser = new SqlParser();
+        private static readonly SqlClient Client = new SqlClient(Parser);
+
         [ChildActionOnly]
         public ActionResult Index()
         {
@@ -25,13 +28,11 @@ namespace FlightBooking.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Create([Bind(Include = "StreetNumber,StreetName,City,ZipCode,Country")] Address address)
         {
-            var client = new SqlClient(new SqlParser());
-
             try
             {
                 if (ModelState.IsValid)
                 {
-                    client.InsertAddress(address.StreetNumber, address.StreetName, address.City, address.State,
+                    Client.InsertAddress(address.StreetNumber, address.StreetName, address.City, address.State,
                         address.ZipCode, address.Country);
                     return RedirectToAction("Index", "Account");
                 }
@@ -47,13 +48,11 @@ namespace FlightBooking.Controllers
 
         public ActionResult Edit(int? id)
         {
-            var client = new SqlClient(new SqlParser());
-
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            var address = client.GetAddress(id.Value).First();
+            var address = Client.GetAddress(id.Value)?.First();
 
             if (address == null)
             {
@@ -70,14 +69,15 @@ namespace FlightBooking.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
+            
+            var address = Client.GetAddress(id.Value).First();
 
-            // TODO: database search for address
-            var address = new Address(111, "Street", "Chicago", "IL", "60600", "United States", 1);
             if (TryUpdateModel(address, "", new[]{"StreetNumber", "StreetName", "City", "ZipCode", "Country"}))
             {
                 try
                 {
-                    // TODO: save changes to database
+                    Client.UpdateAddress(address.StreetNumber, address.StreetName, address.City, address.State,
+                        address.ZipCode, address.Country, address.AddressID);
 
                     return RedirectToAction("Index", "Account");
                 }
@@ -97,9 +97,8 @@ namespace FlightBooking.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-
-            // TODO: database search for address
-            var address = new Address(111, "Street", "Chicago", "IL", "60600", "United States", 1);
+            
+            var address = Client.GetAddress(id.Value)?.First();
             if (address == null)
             {
                 return HttpNotFound();
@@ -111,9 +110,7 @@ namespace FlightBooking.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
         {
-            // TODO: database search for address
-            var address = new Address(111, "Street", "Chicago", "IL", "60600", "United States", 1);
-            // TODO: database delete
+            Client.DeleteAddress(id);
             return RedirectToAction("Index", "Account");
         }
     }
