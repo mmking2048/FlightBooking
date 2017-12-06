@@ -26,6 +26,8 @@ namespace FlightBooking.Models
         // TODO: Add IEnumberable<Customer> since we said a credit card can have many owners?
         // public IEnumerable<Customer> Owners { get; set; }
 
+        public CreditCard() { }
+
         public CreditCard(string type, string ccNumber, string cardFirstName, string cardLastName, DateTime expirationDate,
             string cvc, int addressID)
         {

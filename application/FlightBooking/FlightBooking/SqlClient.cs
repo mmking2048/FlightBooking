@@ -426,14 +426,16 @@ namespace FlightBooking
                 using (var cmd = new NpgsqlCommand())
                 {
                     cmd.Connection = conn;
-                    cmd.CommandText =
+                    cmd.CommandText = state != null ?
                         "INSERT INTO address (streetnumber, streetname, city, state, zipcode, country) " +
-                        "VALUES (@streetnumber, @streetname, @city, @state, @zipcode, @country) RETURNING addressid;";
+                        "VALUES (@streetnumber, @streetname, @city, @state, @zipcode, @country) RETURNING addressid;"
+                        : "INSERT INTO address (streetnumber, streetname, city, country) " +
+                          "VALUES (@streetnumber, @streetname, @city, @country) RETURNING addressid;";
                     cmd.Parameters.AddWithValue("streetnumber", streetNumber);
                     cmd.Parameters.AddWithValue("streetname", streetName);
                     cmd.Parameters.AddWithValue("city", city);
-                    cmd.Parameters.AddWithValue("state", state);
-                    cmd.Parameters.AddWithValue("zipcode", zipCode);
+                    cmd.Parameters.AddWithValue("state", state ?? "");
+                    cmd.Parameters.AddWithValue("zipcode", zipCode ?? "");
                     cmd.Parameters.AddWithValue("country", country);
                     addressID = (int) cmd.ExecuteScalar();
                 }
