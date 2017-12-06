@@ -1,15 +1,21 @@
 ﻿using System;
+using System.Linq;
 using System.Net;
 using System.Web.Mvc;
 using FlightBooking.Models;
+using Microsoft.Ajax.Utilities;
 
 namespace FlightBooking.Controllers
 {
     public class CreditCardController : Controller
     {
+        private static readonly SqlParser Parser = new SqlParser();
+        private static readonly SqlClient Client = new SqlClient(Parser);
+
         [ChildActionOnly]
         public ActionResult Index()
         {
+            // TODO: database search for list of credit cards
             var creditCards = new[] {new CreditCard("Visa", "1111000011110000", "First", "Last", DateTime.Now, "111", 1)};
             return PartialView("Index", creditCards);
         }
@@ -27,7 +33,9 @@ namespace FlightBooking.Controllers
             {
                 if (ModelState.IsValid)
                 {
-                    // TODO: database insert
+                    Client.InsertCreditCard(creditCard.Type, creditCard.CcNumber, creditCard.CardFirstName,
+                        creditCard.CardLastName, creditCard.ExpirationDate, creditCard.Cvc, creditCard.AddressID);
+
                     return RedirectToAction("Index", "Account");
                 }
             }
@@ -40,14 +48,13 @@ namespace FlightBooking.Controllers
             return View(creditCard);
         }
 
-        public ActionResult Edit(int? id)
+        public ActionResult Edit(string id)
         {
-            if (id == null)
+            if (id.IsNullOrWhiteSpace())
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            // TODO: database search for credit card
-            var creditCard = new CreditCard("Visa", "1111000011110000", "First", "Last", DateTime.Now, "111", 1);
+            var creditCard = Client.GetCreditCard(id)?.First();
 
             if (creditCard == null)
             {
@@ -58,20 +65,20 @@ namespace FlightBooking.Controllers
 
         [HttpPost, ActionName("Edit")]
         [ValidateAntiForgeryToken]
-        public ActionResult EditPost(int? id)
+        public ActionResult EditPost(string id)
         {
-            if (id == null)
+            if (id.IsNullOrWhiteSpace())
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-
-            // TODO: database search for credit card
-            var creditCard = new CreditCard("Visa", "1111000011110000", "First", "Last", DateTime.Now, "111", 1);
+            
+            var creditCard = Client.GetCreditCard(id).First();
             if (TryUpdateModel(creditCard, "", new[] { "Type", "CcNumber", "CardFirstName", "CardLastName", "ExpirationDate", "Cvc", "AddressID" }))
             {
                 try
                 {
-                    // TODO: save changes to database
+                    Client.UpdateCreditCard(creditCard.Type, creditCard.CcNumber, creditCard.CardFirstName,
+                        creditCard.CardLastName, creditCard.ExpirationDate, creditCard.Cvc, creditCard.AddressID);
 
                     return RedirectToAction("Index", "Account");
                 }
@@ -85,15 +92,14 @@ namespace FlightBooking.Controllers
             return View(creditCard);
         }
 
-        public ActionResult Delete(int? id)
+        public ActionResult Delete(string id)
         {
-            if (id == null)
+            if (id.IsNullOrWhiteSpace())
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-
-            // TODO: database search for credit card
-            var creditCard = new CreditCard("Visa", "1111000011110000", "First", "Last", DateTime.Now, "111", 1);
+            
+            var creditCard = Client.GetCreditCard(id)?.First();
             if (creditCard == null)
             {
                 return HttpNotFound();
@@ -103,11 +109,9 @@ namespace FlightBooking.Controllers
 
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public ActionResult DeleteConfirmed(int id)
+        public ActionResult DeleteConfirmed(string id)
         {
-            // TODO: database search for credit card
-            var creditCard = new CreditCard("Visa", "1111000011110000", "First", "Last", DateTime.Now, "111", 1);
-            // TODO: database delete
+            Client.DeleteCreditCard(id);
             return RedirectToAction("Index", "Account");
         }
     }
