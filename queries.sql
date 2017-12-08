@@ -39,6 +39,15 @@ WHERE CCNumber = '1111000011110000';
 
 -- Search flights
 -- Recursive query required
+WITH RECURSIVE connections AS (
+SELECT *, 1 path_length, ARRAY[airlineid, flightnumber]::text[] AS route FROM flight WHERE departureairport = 'ORD' AND (bookedcoach < maxcoach OR bookedfirst < maxfirstclass) AND date = '2017-08-12'
+UNION
+SELECT two.date, two.flightnumber, two.departureTime, two.maxcoach, two.maxfirstclass, two.arrivalTime, connections.departureairport, two.arrivalairport, two.airlineid,
+    two.bookedcoach, two.bookedfirst, path_length + 1 AS path_length, route || ARRAY[two.airlineid, two.flightnumber]::text[] AS route
+FROM connections, flight two
+WHERE connections.arrivalairport = two.departureairport AND path_length < 3 AND two.date = '2017-08-12' AND (two.bookedcoach < two.maxcoach OR two.bookedfirst < two.maxfirstclass) AND (connections.arrivaltime - '00:30:00') > two.departuretime
+)
+SELECT route FROM connections WHERE arrivalairport = 'MIA';
 
 -- Create booking
 -- May need to add overbooking detection by decrementing MaxCoach or MaxFirstClass

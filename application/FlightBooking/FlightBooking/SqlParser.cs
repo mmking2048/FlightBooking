@@ -27,7 +27,7 @@ namespace FlightBooking
             return customers;
         }
 
-        public IEnumerable<Flight> ParseFlight(NpgsqlDataReader reader)
+        public Flight ParseFlight(NpgsqlDataReader reader)
         {
             var flights = new List<Flight>();
             var dateColumn = reader.GetOrdinal("date");
@@ -36,11 +36,11 @@ namespace FlightBooking
             var arrivalTimeColumn = reader.GetOrdinal("arrivaltime");
             var departureAirportColumn = reader.GetOrdinal("departureairport");
             var arrivalAirportColumn = reader.GetOrdinal("arrivalairport");
-            var airlineIDColumn = reader.GetOrdinal("arrivalid");
+            var airlineIDColumn = reader.GetOrdinal("airlineid");
             var maxCoachColumn = reader.GetOrdinal("maxcoach");
-            var maxFirstClassColumn = reader.GetOrdinal("maxfirstclass");
+            var maxFirstColumn = reader.GetOrdinal("maxfirst");
             var bookedCoachColumn = reader.GetOrdinal("bookedcoach");
-            var bookedFirstClassColumn = reader.GetOrdinal("bookedfirstclass");
+            var bookedFirstColumn = reader.GetOrdinal("bookedfirst");
 
             while(reader.Read())
             {
@@ -52,16 +52,30 @@ namespace FlightBooking
                 var arrivalAirport = reader.GetString(arrivalAirportColumn);
                 var airlineID = reader.GetString(airlineIDColumn);
                 var maxCoach = reader.GetInt16(maxCoachColumn);
-                var maxFirstClass = reader.GetInt16(maxFirstClassColumn);
+                var maxFirst = reader.GetInt16(maxFirstColumn);
                 var bookedCoach = reader.GetInt16(bookedCoachColumn);
-                var bookedFirstClass = reader.GetInt16(bookedFirstClassColumn);
+                var bookedFirst = reader.GetInt16(bookedFirstColumn);
 
                 flights.Add(new Flight(date, flightNumber, departureTime, arrivalTime, departureAirport,
-                    arrivalAirport, maxCoach, maxFirstClass, airlineID, bookedCoach, bookedFirstClass));
+                    arrivalAirport, maxCoach, maxFirst, airlineID, bookedCoach, bookedFirst));
             }
 
-            return flights;
+            return flights[0];
         }
+
+
+        public IEnumerable<string[]> ParseRoute(NpgsqlDataReader reader)
+        {
+            var routes = new List<string[]>();
+
+            while (reader.Read())
+            {
+                routes.Add(reader["route"] as string[]);
+            }
+
+            return routes;
+        }
+        
 
         public IEnumerable<Address> ParseAddress(NpgsqlDataReader reader)
         {
@@ -109,7 +123,7 @@ namespace FlightBooking
             return airlines;
         }
 
-        public IEnumerable<Airport> ParseAirport(NpgsqlDataReader reader)
+        public Airport ParseAirport(NpgsqlDataReader reader)
         {
             var airports = new List<Airport>();
             var iataIDColumn = reader.GetOrdinal("iataid");
@@ -131,7 +145,7 @@ namespace FlightBooking
                 airports.Add(new Airport(iataID, airportName, country, state, latitude, longitude));
             }
 
-            return airports;
+            return airports[0];
         }
 
         public IEnumerable<CreditCard> ParseCreditCard(NpgsqlDataReader reader)
