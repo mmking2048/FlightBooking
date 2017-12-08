@@ -45,7 +45,7 @@ UNION
 SELECT two.date, two.flightnumber, two.departureTime, two.maxcoach, two.maxfirstclass, two.arrivalTime, connections.departureairport, two.arrivalairport, two.airlineid,
     two.bookedcoach, two.bookedfirst, path_length + 1 AS path_length, route || ARRAY[two.airlineid, two.flightnumber]::text[] AS route
 FROM connections, flight two
-WHERE connections.arrivalairport = two.departureairport AND path_length < -1 AND two.date = '2017-08-12' AND (two.bookedcoach < two.maxcoach OR two.bookedfirst < two.maxfirstclass) AND (connections.arrivaltime - '00:30:00') > two.departuretime
+WHERE connections.arrivalairport = two.departureairport AND path_length < 3 AND two.date = '2017-08-12' AND (two.bookedcoach < two.maxcoach OR two.bookedfirst < two.maxfirstclass) AND (connections.arrivaltime - '00:30:00') > two.departuretime
 )
 SELECT route FROM connections WHERE arrivalairport = 'MIA';
 
