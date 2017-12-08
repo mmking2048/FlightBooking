@@ -27,7 +27,7 @@ namespace FlightBooking
             return customers;
         }
 
-        public IEnumerable<Flight> ParseFlight(NpgsqlDataReader reader)
+        public Flight ParseFlight(NpgsqlDataReader reader)
         {
             var flights = new List<Flight>();
             var dateColumn = reader.GetOrdinal("date");
@@ -36,7 +36,7 @@ namespace FlightBooking
             var arrivalTimeColumn = reader.GetOrdinal("arrivaltime");
             var departureAirportColumn = reader.GetOrdinal("departureairport");
             var arrivalAirportColumn = reader.GetOrdinal("arrivalairport");
-            var airlineIDColumn = reader.GetOrdinal("arrivalid");
+            var airlineIDColumn = reader.GetOrdinal("airlineid");
             var maxCoachColumn = reader.GetOrdinal("maxcoach");
             var maxFirstColumn = reader.GetOrdinal("maxfirst");
             var bookedCoachColumn = reader.GetOrdinal("bookedcoach");
@@ -60,7 +60,7 @@ namespace FlightBooking
                     arrivalAirport, maxCoach, maxFirst, airlineID, bookedCoach, bookedFirst));
             }
 
-            return flights;
+            return flights[0];
         }
 
 

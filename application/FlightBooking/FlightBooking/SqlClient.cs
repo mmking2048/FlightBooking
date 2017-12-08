@@ -169,8 +169,7 @@ namespace FlightBooking
             }
         }
 
-        public IEnumerable<Flight> GetFlight(DateTime date, int flightNumber, DateTime departureTime, DateTime arrivalTime, 
-            string departureAirport, string arrivalAirport, int maxCoach, int maxFirst, int bookedCoach, int bookedFirst)
+        public Flight GetFlight(DateTime date, int flightNumber, string airlineID)
         {
             using (var conn = new NpgsqlConnection(_connString))
             {
@@ -179,11 +178,16 @@ namespace FlightBooking
                 using (var cmd = new NpgsqlCommand())
                 {
                     cmd.Connection = conn;
+                    cmd.CommandText = "SELECT * from flight WHERE date = @date and flightnumber = @flightnumber and airlineid = @airlineid";
+                    /*
                     cmd.CommandText = "SELECT * FROM flight WHERE date = @date AND flightnumber = @flightnumber AND departuretime = @departuretime AND" +
                         "arrivaltime = @arrivaltime AND departureairport = @departureairport AND arrivalairport = @arrivalairport AND" +
                         "maxcoach = @maxcoach AND maxfirst = @maxfirst AND bookedcoach = @bookedcoach AND bookedfirst = @bookedfirst";
+                    */
                     cmd.Parameters.AddWithValue("date", date);
                     cmd.Parameters.AddWithValue("flightnumber", flightNumber);
+                    cmd.Parameters.AddWithValue("airlineid", airlineID);
+                    /*
                     cmd.Parameters.AddWithValue("departuretime", departureTime);
                     cmd.Parameters.AddWithValue("arrivaltime", arrivalTime);
 					cmd.Parameters.AddWithValue("departureairport", departureAirport);
@@ -192,7 +196,7 @@ namespace FlightBooking
                     cmd.Parameters.AddWithValue("maxfirst", maxFirst);
                     cmd.Parameters.AddWithValue("bookedcoach", bookedCoach);
                     cmd.Parameters.AddWithValue("bookedfirst", bookedFirst);
-
+                    */
                     using (var reader = cmd.ExecuteReader())
                     {
                         return _sqlParser.ParseFlight(reader);
@@ -237,11 +241,15 @@ namespace FlightBooking
                         var route = new List<Flight>();
                         for (int i = 0; i < r.Length; i++)
                         {
-                            var airlineid = r[i];
-                            var flightnumber = r[i + 1];
+                            string airlineID = r[i];
+                            int flightNumber = Int32.Parse(r[i + 1]);
 
+                            route.Add(GetFlight(date, flightNumber, airlineID));
                         }
+                        allRoutes.Add(route);
                     }
+
+                    return allRoutes;
                 }
             }
         }
