@@ -92,7 +92,7 @@ namespace FlightBooking
             }
         }
 
-        public IEnumerable<Airport> GetAirport(string iataID, string airportName, string country, string state, double latitude, double longitude)
+        public Airport GetAirport(string iataID) //, string airportName, string country, string state, double latitude, double longitude)
         {
             using (var conn = new NpgsqlConnection(_connString))
             {
@@ -101,14 +101,15 @@ namespace FlightBooking
                 using (var cmd = new NpgsqlCommand())
                 {
                     cmd.Connection = conn;
-                    cmd.CommandText = "SELECT * FROM airport WHERE iata_id = @iata_id AND airportname = @airportname AND country = @country AND " +
-                        "state = @state AND latitude = @latitude AND longitude = @longitude";
+                    cmd.CommandText = "SELECT * FROM airport WHERE iata_id = @iata_id"; // AND airportname = @airportname AND country = @country AND " +
+                        // "state = @state AND latitude = @latitude AND longitude = @longitude";
                     cmd.Parameters.AddWithValue("iata_id", iataID);
+                    /*
                     cmd.Parameters.AddWithValue("country", country);
                     cmd.Parameters.AddWithValue("state", state);
                     cmd.Parameters.AddWithValue("latitude", latitude);
                     cmd.Parameters.AddWithValue("longitude", longitude);
-
+                    */
                     using (var reader = cmd.ExecuteReader())
                     {
                         return _sqlParser.ParseAirport(reader);
@@ -223,7 +224,7 @@ namespace FlightBooking
                         "SELECT two.date, two.flightnumber, two.departureTime, two.maxcoach, two.maxfirstclass, two.arrivalTime, connections.departureairport, two.arrivalairport, two.airlineid, " +
                             "two.bookedcoach, two.bookedfirst, path_length + 1 AS path_length, route || ARRAY[two.airlineid, two.flightnumber]::text[] AS route " +
                         "FROM connections, flight two " +
-                        "WHERE connections.arrivalairport = two.departureairport AND path_length < 3 AND two.date = '2017-07-12' AND(two.bookedcoach < two.maxcoach OR two.bookedfirst < two.maxfirstclass) AND(connections.arrivaltime - '00:30:00') > two.departuretime" +
+                        "WHERE connections.arrivalairport = two.departureairport AND path_length < @maxconnections AND two.date = @date AND(two.bookedcoach < two.maxcoach OR two.bookedfirst < two.maxfirstclass) AND(connections.arrivaltime - '00:30:00') > two.departuretime" +
                         ") " +
                         "SELECT route FROM connections WHERE arrivalairport = @arrivalairport; ";
                     cmd.Parameters.AddWithValue("date", date);
