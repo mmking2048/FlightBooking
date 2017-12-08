@@ -170,7 +170,7 @@ namespace FlightBooking
         }
 
         public IEnumerable<Flight> GetFlight(DateTime date, int flightNumber, DateTime departureTime, DateTime arrivalTime, 
-            string departureAirport, string arrivalAirport, int maxCoach, int maxFirstClass, int bookedCoach, int bookedFirstClass)
+            string departureAirport, string arrivalAirport, int maxCoach, int maxFirst, int bookedCoach, int bookedFirst)
         {
             using (var conn = new NpgsqlConnection(_connString))
             {
@@ -181,7 +181,7 @@ namespace FlightBooking
                     cmd.Connection = conn;
                     cmd.CommandText = "SELECT * FROM flight WHERE date = @date AND flightnumber = @flightnumber AND departuretime = @departuretime AND" +
                         "arrivaltime = @arrivaltime AND departureairport = @departureairport AND arrivalairport = @arrivalairport AND" +
-                        "maxcoach = @maxcoach AND maxfirstclass = @maxfirstclass AND bookedcoach = @bookedcoach AND bookedfirstclass = @bookedfirstclass";
+                        "maxcoach = @maxcoach AND maxfirst = @maxfirst AND bookedcoach = @bookedcoach AND bookedfirst = @bookedfirst";
                     cmd.Parameters.AddWithValue("date", date);
                     cmd.Parameters.AddWithValue("flightnumber", flightNumber);
                     cmd.Parameters.AddWithValue("departuretime", departureTime);
@@ -189,13 +189,58 @@ namespace FlightBooking
 					cmd.Parameters.AddWithValue("departureairport", departureAirport);
                     cmd.Parameters.AddWithValue("arrivalairport", arrivalAirport);
                     cmd.Parameters.AddWithValue("maxcoach", maxCoach);
-                    cmd.Parameters.AddWithValue("maxfirstclass", maxFirstClass);
+                    cmd.Parameters.AddWithValue("maxfirst", maxFirst);
                     cmd.Parameters.AddWithValue("bookedcoach", bookedCoach);
-                    cmd.Parameters.AddWithValue("bookedfirstclass", bookedFirstClass);
+                    cmd.Parameters.AddWithValue("bookedfirst", bookedFirst);
 
                     using (var reader = cmd.ExecuteReader())
                     {
                         return _sqlParser.ParseFlight(reader);
+                    }
+                }
+            }
+        }
+
+        public IEnumerable<IEnumerable<Flight>> GetRoute(DateTime date, string departureAirport, string arrivalAirport, int maxConnections)
+        {
+            using (var conn = new NpgsqlConnection(_connString))
+            {
+                conn.Open();
+                var allRoutes = new List<IEnumerable<Flight>>();
+                IEnumerable<string[]> routesArray;
+
+                using (var cmd = new NpgsqlCommand())
+                {
+                    cmd.Connection = conn;
+                    cmd.CommandText =
+                        "WITH RECURSIVE connections AS (" +
+                        "SELECT *, 1 path_length, ARRAY[airlineid, flightnumber]::text[] AS route FROM flight WHERE departureairport = @departureairport AND(bookedcoach < maxcoach OR bookedfirst < maxfirstclass) AND date = @date " +
+                        "UNION " +
+                        "SELECT two.date, two.flightnumber, two.departureTime, two.maxcoach, two.maxfirstclass, two.arrivalTime, connections.departureairport, two.arrivalairport, two.airlineid, " +
+                            "two.bookedcoach, two.bookedfirst, path_length + 1 AS path_length, route || ARRAY[two.airlineid, two.flightnumber]::text[] AS route " +
+                        "FROM connections, flight two " +
+                        "WHERE connections.arrivalairport = two.departureairport AND path_length < 3 AND two.date = '2017-07-12' AND(two.bookedcoach < two.maxcoach OR two.bookedfirst < two.maxfirstclass) AND(connections.arrivaltime - '00:30:00') > two.departuretime" +
+                        ") " +
+                        "SELECT route FROM connections WHERE arrivalairport = @arrivalairport; ";
+                    cmd.Parameters.AddWithValue("date", date);
+                    cmd.Parameters.AddWithValue("departureairport", departureAirport);
+                    cmd.Parameters.AddWithValue("arrivalairport", arrivalAirport);
+                    cmd.Parameters.AddWithValue("maxconnections", maxConnections+1);
+
+                    using (var reader = cmd.ExecuteReader())
+                    {
+                        routesArray = _sqlParser.ParseRoute(reader);
+                    }
+                    
+                    foreach (string[] r in routesArray)
+                    {
+                        var route = new List<Flight>();
+                        for (int i = 0; i < r.Length; i++)
+                        {
+                            var airlineid = r[i];
+                            var flightnumber = r[i + 1];
+
+                        }
                     }
                 }
             }
@@ -429,7 +474,7 @@ namespace FlightBooking
 
         public void InsertFlight(DateTime date, int flightNumber, DateTimeOffset departureTime,
         DateTimeOffset arrivalTime, string departureAirport, string arrivalAirport,
-        int maxCoach, int maxFirstClass, string airlineID, int bookedCoach, int bookedFirstClass)
+        int maxCoach, int maxFirst, string airlineID, int bookedCoach, int bookedFirst)
         {
             using (var conn = new NpgsqlConnection(_connString))
             {
@@ -439,8 +484,8 @@ namespace FlightBooking
                 {
                     cmd.Connection = conn;
                     cmd.CommandText =
-                        "INSERT INTO flight (date, flightnumber, departuretime, arrivaltime, departureairport, maxcoach, maxfirstclass, airlineid, bookedcoach, bookedfirstclass) " +
-                        "VALUES (@date, @flightnumber, @departuretime, @departureairport, @arrivalairport, @maxcoach, @maxfirstclass, @airlineid, @bookedcoach, @bookedfirstclass);";
+                        "INSERT INTO flight (date, flightnumber, departuretime, arrivaltime, departureairport, maxcoach, maxfirst, airlineid, bookedcoach, bookedfirst) " +
+                        "VALUES (@date, @flightnumber, @departuretime, @departureairport, @arrivalairport, @maxcoach, @maxfirst, @airlineid, @bookedcoach, @bookedfirst);";
                     cmd.Parameters.AddWithValue("date", date);
                     cmd.Parameters.AddWithValue("flightnumber", flightNumber);
                     cmd.Parameters.AddWithValue("departuretime", departureTime);
@@ -448,10 +493,10 @@ namespace FlightBooking
                     cmd.Parameters.AddWithValue("departureairport", departureAirport);
                     cmd.Parameters.AddWithValue("arrivalairport", arrivalAirport);
                     cmd.Parameters.AddWithValue("maxcoach", maxCoach);
-                    cmd.Parameters.AddWithValue("maxfirstclass", maxFirstClass);
+                    cmd.Parameters.AddWithValue("maxfirst", maxFirst);
                     cmd.Parameters.AddWithValue("airlineid", airlineID);
                     cmd.Parameters.AddWithValue("bookedcoach", bookedCoach);
-                    cmd.Parameters.AddWithValue("bookedfirstclass", bookedFirstClass);
+                    cmd.Parameters.AddWithValue("bookedfirst", bookedFirst);
                     cmd.ExecuteNonQuery();
                 }
             }
@@ -690,7 +735,7 @@ namespace FlightBooking
         }
 
         public void UpdateFlight(DateTime date, int flightNumber, DateTimeOffset departureTime, DateTimeOffset arrivalTime, string departureAirport, 
-            string arrivalAirport, int maxCoach, int maxFirstClass, string airlineID, int bookedCoach, int bookedFirstClass)
+            string arrivalAirport, int maxCoach, int maxFirst, string airlineID, int bookedCoach, int bookedFirst)
         {
             using (var conn = new NpgsqlConnection(_connString))
             {
@@ -701,7 +746,7 @@ namespace FlightBooking
                     cmd.Connection = conn;
                     cmd.CommandText =
                         "UPDATE flight SET departuretime = @departuretime, arrivaltime = @arrivaltime, departureairport = @departureairport, " +
-                        "arrivalairport = @arrivalairport, maxcoach = @maxcoach, maxfirstclass = @maxfirstclass, bookedcoach = @bookedcoach, bookedfirstclass = @bookedfirstclass" +
+                        "arrivalairport = @arrivalairport, maxcoach = @maxcoach, maxfirst = @maxfirst, bookedcoach = @bookedcoach, bookedfirst = @bookedfirst" +
                         "WHERE date = @date AND flightnumber = @flightnumber AND airlineid = @airlineid;";
                     cmd.Parameters.AddWithValue("date", date);
                     cmd.Parameters.AddWithValue("flightnumber", flightNumber);
@@ -710,10 +755,10 @@ namespace FlightBooking
 					cmd.Parameters.AddWithValue("departureairport", departureAirport);
                     cmd.Parameters.AddWithValue("arrivalairport", arrivalAirport);
                     cmd.Parameters.AddWithValue("maxcoach", maxCoach);
-                    cmd.Parameters.AddWithValue("maxfirstclass", maxFirstClass);
+                    cmd.Parameters.AddWithValue("maxfirst", maxFirst);
 					cmd.Parameters.AddWithValue("airlineid", airlineID);
                     cmd.Parameters.AddWithValue("bookedcoach", bookedCoach);
-                    cmd.Parameters.AddWithValue("bookedfirstclass", bookedFirstClass);
+                    cmd.Parameters.AddWithValue("bookedfirst", bookedFirst);
                     cmd.ExecuteNonQuery();
                 }
             }
