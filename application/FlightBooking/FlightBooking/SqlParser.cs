@@ -123,7 +123,7 @@ namespace FlightBooking
             return airlines;
         }
 
-        public IEnumerable<Airport> ParseAirport(NpgsqlDataReader reader)
+        public Airport ParseAirport(NpgsqlDataReader reader)
         {
             var airports = new List<Airport>();
             var iataIDColumn = reader.GetOrdinal("iataid");
@@ -145,7 +145,7 @@ namespace FlightBooking
                 airports.Add(new Airport(iataID, airportName, country, state, latitude, longitude));
             }
 
-            return airports;
+            return airports[0];
         }
 
         public IEnumerable<CreditCard> ParseCreditCard(NpgsqlDataReader reader)

@@ -206,7 +206,7 @@ namespace FlightBooking
             }
         }
 
-        public IEnumerable<IEnumerable<Flight>> GetRoute(DateTime date, string departureAirport, string arrivalAirport, int maxConnections)
+        public IEnumerable<IEnumerable<Flight>> GetRoutes(DateTime date, string departureAirport, string arrivalAirport, int maxConnections)
         {
             using (var conn = new NpgsqlConnection(_connString))
             {
