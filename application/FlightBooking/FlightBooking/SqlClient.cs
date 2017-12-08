@@ -240,7 +240,7 @@ namespace FlightBooking
                     foreach (string[] r in routesArray)
                     {
                         var route = new List<Flight>();
-                        for (int i = 0; i < r.Length; i++)
+                        for (int i = 0; i < r.Length; i = i + 2)
                         {
                             string airlineID = r[i];
                             int flightNumber = Int32.Parse(r[i + 1]);
