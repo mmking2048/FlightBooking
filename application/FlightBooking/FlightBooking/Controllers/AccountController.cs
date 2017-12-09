@@ -37,8 +37,8 @@ namespace FlightBooking.Controllers
                 return RedirectToAction("Index");
             }
 
-            var customers = Client.GetCustomer(vm.Email);
-            if (!customers.Any())
+            var customer = Client.GetCustomer(vm.Email);
+            if (customer != null)
             {
                 // TODO: insert new customer
                 CurrentUser.Email = vm.Email;
