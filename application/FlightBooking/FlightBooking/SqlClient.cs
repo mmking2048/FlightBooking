@@ -297,7 +297,7 @@ namespace FlightBooking
             }
         }
 
-        public IEnumerable<IEnumerable<Flight>> GetRoutes(DateTime date, string departureAirport, string arrivalAirport, int maxConnections)
+        public IEnumerable<IEnumerable<Flight>> GetRoutes(DateTime date, string departureAirport, string arrivalAirport, int maxConnections, TimeSpan maxTime, decimal maxPrice)
         {
             using (var conn = new NpgsqlConnection(_connString))
             {
@@ -331,14 +331,32 @@ namespace FlightBooking
                     foreach (string[] r in routesArray)
                     {
                         var route = new List<Flight>();
+                        decimal firstCost = 0;
+                        decimal coachCost = 0;
                         for (int i = 0; i < r.Length; i = i + 2)
                         {
                             string airlineID = r[i];
                             int flightNumber = Int32.Parse(r[i + 1]);
+                            
 
-                            route.Add(GetFlight(date, flightNumber, airlineID));
+                            var flight = GetFlight(date, flightNumber, airlineID);
+                            route.Add(flight);
+                            if (flight.Prices.First().FlightClass == "First")
+                            {
+                                firstCost += flight.Prices.First().Cost;
+                                coachCost += flight.Prices.Last().Cost;
+                            }
+                            else
+                            {
+                                firstCost += flight.Prices.Last().Cost;
+                                coachCost += flight.Prices.First().Cost;
+                            }
                         }
-                        allRoutes.Add(route);
+                        if ((route.Last().ArrivalTime - route.First().DepartureTime) < maxTime
+                            && (coachCost <= maxPrice || firstCost <= maxPrice))
+                        {
+                            allRoutes.Add(route);
+                        }
                     }
 
                     return allRoutes;
