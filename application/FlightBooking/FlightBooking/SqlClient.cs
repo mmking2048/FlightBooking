@@ -44,6 +44,26 @@ namespace FlightBooking
             }
         }
 
+        public IEnumerable<Address> GetAddress(int addressID)
+        {
+            using (var conn = new NpgsqlConnection(_connString))
+            {
+                conn.Open();
+
+                using (var cmd = new NpgsqlCommand())
+                {
+                    cmd.Connection = conn;
+                    cmd.CommandText = "SELECT * FROM address WHERE addressid = @addressid";
+                    cmd.Parameters.AddWithValue("addressid", addressID);
+
+                    using (var reader = cmd.ExecuteReader())
+                    {
+                        return _sqlParser.ParseAddress(reader);
+                    }
+                }
+            }
+        }
+
         public IEnumerable<Address> GetAddress(int streetNumber, string streetName, string city, string zipCode, string country, int addressID)
         {
             using (var conn = new NpgsqlConnection(_connString))
@@ -137,6 +157,26 @@ namespace FlightBooking
                     using (var reader = cmd.ExecuteReader())
                     {
                         return _sqlParser.ParseBooking(reader);
+                    }
+                }
+            }
+        }
+
+        public IEnumerable<CreditCard> GetCreditCard(string ccNumber)
+        {
+            using (var conn = new NpgsqlConnection(_connString))
+            {
+                conn.Open();
+
+                using (var cmd = new NpgsqlCommand())
+                {
+                    cmd.Connection = conn;
+                    cmd.CommandText = "SELECT * FROM creditcard WHERE ccnumber = @ccnumber;";
+                    cmd.Parameters.AddWithValue("ccnumber", ccNumber);
+
+                    using (var reader = cmd.ExecuteReader())
+                    {
+                        return _sqlParser.ParseCreditCard(reader);
                     }
                 }
             }
@@ -386,14 +426,16 @@ namespace FlightBooking
                 using (var cmd = new NpgsqlCommand())
                 {
                     cmd.Connection = conn;
-                    cmd.CommandText =
+                    cmd.CommandText = state != null ?
                         "INSERT INTO address (streetnumber, streetname, city, state, zipcode, country) " +
-                        "VALUES (@streetnumber, @streetname, @city, @state, @zipcode, @country) RETURNING addressid;";
+                        "VALUES (@streetnumber, @streetname, @city, @state, @zipcode, @country) RETURNING addressid;"
+                        : "INSERT INTO address (streetnumber, streetname, city, country) " +
+                          "VALUES (@streetnumber, @streetname, @city, @country) RETURNING addressid;";
                     cmd.Parameters.AddWithValue("streetnumber", streetNumber);
                     cmd.Parameters.AddWithValue("streetname", streetName);
                     cmd.Parameters.AddWithValue("city", city);
-                    cmd.Parameters.AddWithValue("state", state);
-                    cmd.Parameters.AddWithValue("zipcode", zipCode);
+                    cmd.Parameters.AddWithValue("state", state ?? "");
+                    cmd.Parameters.AddWithValue("zipcode", zipCode ?? "");
                     cmd.Parameters.AddWithValue("country", country);
                     addressID = (int) cmd.ExecuteScalar();
                 }

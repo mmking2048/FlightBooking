@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Net;
 using System.Web.Mvc;
 using FlightBooking.Models;
@@ -7,6 +8,9 @@ namespace FlightBooking.Controllers
 {
     public class AddressController : Controller
     {
+        private static readonly SqlParser Parser = new SqlParser();
+        private static readonly SqlClient Client = new SqlClient(Parser);
+
         [ChildActionOnly]
         public ActionResult Index()
         {
@@ -28,11 +32,12 @@ namespace FlightBooking.Controllers
             {
                 if (ModelState.IsValid)
                 {
-                    // TODO: database insert
+                    Client.InsertAddress(address.StreetNumber, address.StreetName, address.City, address.State,
+                        address.ZipCode, address.Country);
                     return RedirectToAction("Index", "Account");
                 }
             }
-            catch (Exception /* dex */)
+            catch (Exception e)
             {
                 //Log the error (uncomment dex variable name and add a line here to write a log.)
                 ModelState.AddModelError("", "Unable to save changes. Try again, and if the problem persists, see your system administrator.");
@@ -47,8 +52,7 @@ namespace FlightBooking.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            // TODO: database search for address
-            var address = new Address(111, "Street", "Chicago", "IL", "60600", "United States", 1);
+            var address = Client.GetAddress(id.Value)?.First();
 
             if (address == null)
             {
@@ -65,14 +69,15 @@ namespace FlightBooking.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
+            
+            var address = Client.GetAddress(id.Value).First();
 
-            // TODO: database search for address
-            var address = new Address(111, "Street", "Chicago", "IL", "60600", "United States", 1);
             if (TryUpdateModel(address, "", new[]{"StreetNumber", "StreetName", "City", "ZipCode", "Country"}))
             {
                 try
                 {
-                    // TODO: save changes to database
+                    Client.UpdateAddress(address.StreetNumber, address.StreetName, address.City, address.State,
+                        address.ZipCode, address.Country, address.AddressID);
 
                     return RedirectToAction("Index", "Account");
                 }
@@ -92,9 +97,8 @@ namespace FlightBooking.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-
-            // TODO: database search for address
-            var address = new Address(111, "Street", "Chicago", "IL", "60600", "United States", 1);
+            
+            var address = Client.GetAddress(id.Value)?.First();
             if (address == null)
             {
                 return HttpNotFound();
@@ -106,9 +110,7 @@ namespace FlightBooking.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
         {
-            // TODO: database search for address
-            var address = new Address(111, "Street", "Chicago", "IL", "60600", "United States", 1);
-            // TODO: database delete
+            Client.DeleteAddress(id);
             return RedirectToAction("Index", "Account");
         }
     }
