@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.ComponentModel;
 
 namespace FlightBooking.Models
 {
@@ -7,6 +8,7 @@ namespace FlightBooking.Models
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public string Email { get; set; }
+        [DisplayName("Airport")]
         public string IataID { get; set; }
         public IEnumerable<Address> LivesAt { get; set; }
         public IEnumerable<CreditCard> OwnsCreditCards { get; set; }

@@ -45,7 +45,7 @@ namespace FlightBooking.Controllers
                 ModelState.AddModelError("", "Unable to save changes. Try again, and if the problem persists, see your system administrator.");
             }
 
-            return View(creditCard);
+            return RedirectToAction("Index", "Account");
         }
 
         public ActionResult Edit(string id)
