@@ -246,26 +246,6 @@ namespace FlightBooking
             }
         }
 
-        public IEnumerable<Booking> GetBooking(string email)
-        {
-            using (var conn = new NpgsqlConnection(_connString))
-            {
-                conn.Open();
-
-                using (var cmd = new NpgsqlCommand())
-                {
-                    cmd.Connection = conn;
-                    cmd.CommandText = "SELECT * FROM booking WHERE email = @email;";
-                    cmd.Parameters.AddWithValue("email", email);
-
-                    using (var reader = cmd.ExecuteReader())
-                    {
-                        return _sqlParser.ParseBooking(reader);
-                    }
-                }
-            }
-        }
-
         public IEnumerable<Booking> GetBooking(int bookingID, string email, string ccNumber, string flightClass)
         {
             using (var conn = new NpgsqlConnection(_connString))
@@ -397,7 +377,7 @@ namespace FlightBooking
 
                     using (var reader = cmd.ExecuteReader())
                     {
-                        flight = _sqlParser.ParseFlights(reader).First();
+                        flight = _sqlParser.ParseFlight(reader).First();
                     }
 
                     cmd.CommandText = "SELECT * FROM price WHERE date = @date AND flightnumber = @flightnumber AND airlineid = @airlineid;";

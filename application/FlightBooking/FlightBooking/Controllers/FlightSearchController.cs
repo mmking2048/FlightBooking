@@ -25,7 +25,7 @@ namespace FlightBooking.Controllers
                 if (ModelState.IsValid)
                 {
                     var connections = Client.GetRoutes(vm.DepartureDate, vm.DepartureAirport, vm.ArrivalAirport,
-                        vm.MaximumConnections);
+                        vm.MaximumConnections, vm.MaximumTime, vm.MaximumPrice);
 
                     var bookings = connections.Select(c => new FlightConnectionViewModel(c));
                     return View("Results", bookings);

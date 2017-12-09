@@ -31,13 +31,11 @@ namespace FlightBooking.Controllers
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
             
-            var bookings = Client.GetBooking(id.Value).ToArray();
-            var booking = bookings.Length != 0 ? bookings.First() : null;
+            var booking = Client.GetBooking(id.Value);
             if (booking == null)
             {
                 return HttpNotFound();
             }
-            booking.BookingFlights = Client.GetBookingFlights(id.Value);
 
             return View(booking.BookingFlights);
         }
