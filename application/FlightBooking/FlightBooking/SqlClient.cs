@@ -254,34 +254,33 @@ namespace FlightBooking
         {
             using (var conn = new NpgsqlConnection(_connString))
             {
+                Flight flight;
                 conn.Open();
 
                 using (var cmd = new NpgsqlCommand())
                 {
                     cmd.Connection = conn;
-                    cmd.CommandText = "SELECT * from flight WHERE date = @date and flightnumber = @flightnumber and airlineid = @airlineid";
-                    /*
-                    cmd.CommandText = "SELECT * FROM flight WHERE date = @date AND flightnumber = @flightnumber AND departuretime = @departuretime AND" +
-                        "arrivaltime = @arrivaltime AND departureairport = @departureairport AND arrivalairport = @arrivalairport AND" +
-                        "maxcoach = @maxcoach AND maxfirst = @maxfirst AND bookedcoach = @bookedcoach AND bookedfirst = @bookedfirst";
-                    */
+                    cmd.CommandText = "SELECT * FROM flight WHERE date = @date AND flightnumber = @flightnumber AND airlineid = @airlineid;";
                     cmd.Parameters.AddWithValue("date", date);
                     cmd.Parameters.AddWithValue("flightnumber", flightNumber);
                     cmd.Parameters.AddWithValue("airlineid", airlineID);
-                    /*
-                    cmd.Parameters.AddWithValue("departuretime", departureTime);
-                    cmd.Parameters.AddWithValue("arrivaltime", arrivalTime);
-					cmd.Parameters.AddWithValue("departureairport", departureAirport);
-                    cmd.Parameters.AddWithValue("arrivalairport", arrivalAirport);
-                    cmd.Parameters.AddWithValue("maxcoach", maxCoach);
-                    cmd.Parameters.AddWithValue("maxfirst", maxFirst);
-                    cmd.Parameters.AddWithValue("bookedcoach", bookedCoach);
-                    cmd.Parameters.AddWithValue("bookedfirst", bookedFirst);
-                    */
+
                     using (var reader = cmd.ExecuteReader())
                     {
-                        return _sqlParser.ParseFlight(reader).First();
+                        flight = _sqlParser.ParseFlight(reader).First();
                     }
+
+                    cmd.CommandText = "SELECT * FROM price WHERE date = @date AND flightnumber = @flightnumber AND airlineid = @airlineid;";
+                    cmd.Parameters.AddWithValue("date", date);
+                    cmd.Parameters.AddWithValue("flightnumber", flightNumber);
+                    cmd.Parameters.AddWithValue("airlineid", airlineID);
+
+                    using (var reader = cmd.ExecuteReader())
+                    {
+                        flight.Prices = _sqlParser.ParsePrice(reader);
+                    }
+
+                    return flight;
                 }
             }
         }
