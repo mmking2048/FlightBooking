@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Web.Mvc;
+using FlightBooking.Models;
 using FlightBooking.ViewModels;
 
 namespace FlightBooking.Controllers
