@@ -56,7 +56,7 @@ namespace FlightBooking
 
                     cmd.Connection = conn;
                     cmd.CommandText =
-                        "SELECT * FROM customer WHERE email = @email AND firstname = @firstname AND lastname = @lastname AND iata_id = @iata_id";
+                        "SELECT * FROM customer WHERE email = @email";
                     cmd.Parameters.AddWithValue("email", email);
 
                     using (var reader = cmd.ExecuteReader())
