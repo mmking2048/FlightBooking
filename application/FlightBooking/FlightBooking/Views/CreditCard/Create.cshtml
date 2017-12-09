@@ -14,9 +14,7 @@
     <div class="form-horizontal">
         <h4>Credit Card</h4>
         <hr />
-        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-        @Html.HiddenFor(model => model.Type)
-
+        
         <div class="form-group">
             @Html.LabelFor(model => model.Type, new { @class = "control-label col-md-2" })
             <div class="col-md-10">

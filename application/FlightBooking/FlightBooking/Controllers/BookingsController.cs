@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Net;
 using System.Web.Mvc;
 using FlightBooking.Models;
@@ -7,21 +8,14 @@ namespace FlightBooking.Controllers
 {
     public class BookingsController : Controller
     {
+        private static readonly SqlParser Parser = new SqlParser();
+        private static readonly SqlClient Client = new SqlClient(Parser);
 
         public ActionResult Index()
         {
             // TODO: database search for bookings
-            var booking = new Booking(1, "ab@email.com", "1111000011110000", "Coach");
-            var flight = new Flight(DateTime.Now, 1, DateTimeOffset.Now, DateTimeOffset.Now + TimeSpan.FromHours(3),
-                "ORD", "MIA", 10, 10, "AA", 0, 0)
-            {
-                Prices = new[]
-                {
-                    new Price("Coach", 11.00M, DateTime.Now, 1, "AA"),
-                    new Price("First Class", 11.00M, DateTime.Now, 1, "AA")
-                }
-            };
-            booking.BookingFlights = new[] {flight};
+            var booking = new Booking(2043, "ab@email.com", "1111000011110000", "Coach");
+            booking.BookingFlights = Client.GetBookingFlights(booking.BookingID);
             var bookings = new[] {booking};
 
             return View("Index", bookings);
@@ -38,16 +32,15 @@ namespace FlightBooking.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-
-            // TODO: database search for booking
-            var booking = new Booking(1, "ab@email.com", "1111000011110000", "First Class", new[]
-            {
-                new Flight(DateTime.Now, 1, DateTimeOffset.Now, DateTimeOffset.Now, "ORD", "MIA", 10, 10, "AA", 0, 0)
-            });
+            
+            var bookings = Client.GetBooking(id.Value).ToArray();
+            var booking = bookings.Length != 0 ? bookings.First() : null;
             if (booking == null)
             {
                 return HttpNotFound();
             }
+            booking.BookingFlights = Client.GetBookingFlights(id.Value);
+
             return View(booking.BookingFlights);
         }
 
@@ -55,9 +48,7 @@ namespace FlightBooking.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult CancelConfirmed(int id)
         {
-            // TODO: database search for booking
-            
-            // TODO: database delete
+            Client.DeleteBooking(id);
             return RedirectToAction("Index");
         }
     }

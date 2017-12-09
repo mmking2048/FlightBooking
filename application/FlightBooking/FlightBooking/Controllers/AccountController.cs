@@ -1,4 +1,5 @@
 ﻿using System.Web.Mvc;
+using FlightBooking.Models;
 using FlightBooking.ViewModels;
 
 namespace FlightBooking.Controllers
@@ -8,6 +9,13 @@ namespace FlightBooking.Controllers
         // GET: Account
         public ActionResult Index()
         {
+            return View();
+        }
+
+        [HttpPost, ActionName("Index")]
+        public ActionResult Index([Bind(Include = "IataID")] Customer customer)
+        {
+            // TODO: database save iata ID
             return View();
         }
 
