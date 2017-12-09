@@ -13,7 +13,7 @@ namespace FlightBooking.ViewModels
         {
             flights = flights.ToArray();
             DepartureTime = flights.Min(f => f.DepartureTime);
-            ArrivalTime = flights.Min(f => f.ArrivalTime);
+            ArrivalTime = flights.Max(f => f.ArrivalTime);
             TotalLength = ArrivalTime - DepartureTime;
             Flights = flights;
 
