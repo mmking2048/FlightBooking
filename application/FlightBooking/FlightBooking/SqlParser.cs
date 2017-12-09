@@ -54,8 +54,8 @@ namespace FlightBooking
                 var airlineID = reader[airlineIDColumn] as string;
                 var maxCoach = (reader[maxCoachColumn] as int?).GetValueOrDefault();
                 var maxFirst = (reader[maxFirstColumn] as int?).GetValueOrDefault();
-                var bookedCoach = (reader[bookedCoachColumn as int?).GetValueOrDefault();
-                var bookedFirst = (reader[bookedFirstColumn as int?).GetValueOrDefault();
+                var bookedCoach = (reader[bookedCoachColumn] as int?).GetValueOrDefault();
+                var bookedFirst = (reader[bookedFirstColumn] as int?).GetValueOrDefault();
 
                 flights.Add(new Flight(date, flightNumber, departureTime, arrivalTime, departureAirport,
                     arrivalAirport, maxCoach, maxFirst, airlineID, bookedCoach, bookedFirst));
