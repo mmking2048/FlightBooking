@@ -21,7 +21,51 @@ namespace FlightBooking
 
         #region SQL SELECTS
 
-        public Customer GetCustomer(string email)
+        public IEnumerable<Customer> GetCustomer(string email)
+        {
+            using (var conn = new NpgsqlConnection(_connString))
+            {
+                conn.Open();
+
+                using (var cmd = new NpgsqlCommand())
+                {
+                    cmd.Connection = conn;
+                    cmd.CommandText =
+                        "SELECT * FROM customer WHERE email = @email";
+                    cmd.Parameters.AddWithValue("email", email);
+
+                    using (var reader = cmd.ExecuteReader())
+                    {
+                        return _sqlParser.ParseCustomer(reader);
+                    }
+                }
+            }
+        }
+
+        public IEnumerable<Customer> GetCustomer(string email, string firstName, string lastName)
+        {
+            using (var conn = new NpgsqlConnection(_connString))
+            {
+                conn.Open();
+
+                using (var cmd = new NpgsqlCommand())
+                {
+                    cmd.Connection = conn;
+                    cmd.CommandText =
+                        "SELECT * FROM customer WHERE email = @email AND firstname = @firstname AND lastname = @lastname";
+                    cmd.Parameters.AddWithValue("email", email);
+                    cmd.Parameters.AddWithValue("firstname", firstName);
+                    cmd.Parameters.AddWithValue("lastname", lastName);
+
+                    using (var reader = cmd.ExecuteReader())
+                    {
+                        return _sqlParser.ParseCustomer(reader);
+                    }
+                }
+            }
+        }
+
+        public IEnumerable<Customer> GetCustomer(string email, string firstName, string lastName, string iataID)
         {
             using (var conn = new NpgsqlConnection(_connString))
             {
@@ -110,6 +154,28 @@ namespace FlightBooking
             }
         }
 
+        public IEnumerable<Address> GetAddress(string email)
+        {
+            using (var conn = new NpgsqlConnection(_connString))
+            {
+                conn.Open();
+
+                using (var cmd = new NpgsqlCommand())
+                {
+                    cmd.Connection = conn;
+                    cmd.CommandText = "SELECT streetnumber, streetname, city, state, zipcode, country, addressid " +
+                                      "FROM livesat NATURAL JOIN address " +
+                                      "WHERE email = @email;";
+                    cmd.Parameters.AddWithValue("email", email);
+
+                    using (var reader = cmd.ExecuteReader())
+                    {
+                        return _sqlParser.ParseAddress(reader);
+                    }
+                }
+            }
+        }
+
         public IEnumerable<Airline> GetAirline(string airlineID, string country, string airlineName)
         {
             using (var conn = new NpgsqlConnection(_connString))
@@ -178,6 +244,26 @@ namespace FlightBooking
             }
         }
 
+        public IEnumerable<Booking> GetBooking(string email)
+        {
+            using (var conn = new NpgsqlConnection(_connString))
+            {
+                conn.Open();
+
+                using (var cmd = new NpgsqlCommand())
+                {
+                    cmd.Connection = conn;
+                    cmd.CommandText = "SELECT * FROM booking WHERE email = @email;";
+                    cmd.Parameters.AddWithValue("email", email);
+
+                    using (var reader = cmd.ExecuteReader())
+                    {
+                        return _sqlParser.ParseBooking(reader);
+                    }
+                }
+            }
+        }
+
         public IEnumerable<Booking> GetBooking(int bookingID, string email, string ccNumber, string flightClass)
         {
             using (var conn = new NpgsqlConnection(_connString))
@@ -230,6 +316,28 @@ namespace FlightBooking
                     }
 
                     return creditCard;
+                }
+            }
+        }
+
+        public IEnumerable<CreditCard> GetCreditCards(string email)
+        {
+            using (var conn = new NpgsqlConnection(_connString))
+            {
+                conn.Open();
+
+                using (var cmd = new NpgsqlCommand())
+                {
+                    cmd.Connection = conn;
+                    cmd.CommandText = "SELECT ccnumber, type, cardfirstname, cardlastname, expirationdate, cvc, addressid " +
+                                      "FROM creditcardowner NATURAL JOIN creditcard " +
+                                      "WHERE email = @email";
+                    cmd.Parameters.AddWithValue("email", email);
+
+                    using (var reader = cmd.ExecuteReader())
+                    {
+                        return _sqlParser.ParseCreditCard(reader);
+                    }
                 }
             }
         }
