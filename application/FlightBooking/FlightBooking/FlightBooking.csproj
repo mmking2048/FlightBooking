@@ -154,7 +154,6 @@
     <Compile Include="Controllers\BookingsController.cs" />
     <Compile Include="Controllers\CreditCardController.cs" />
     <Compile Include="Controllers\FlightSearchController.cs" />
-    <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -170,8 +169,10 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SqlClient.cs" />
     <Compile Include="SqlParser.cs" />
+    <Compile Include="ViewModels\BookingViewModel.cs" />
     <Compile Include="ViewModels\FlightConnectionViewModel.cs" />
     <Compile Include="ViewModels\FlightSearchViewModel.cs" />
+    <Compile Include="ViewModels\LoginViewModel.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\bootstrap.css" />
@@ -207,7 +208,6 @@
     <Content Include="Views\_ViewStart.cshtml" />
     <Content Include="Views\Shared\Error.cshtml" />
     <Content Include="Views\Shared\_Layout.cshtml" />
-    <Content Include="Views\Home\Index.cshtml" />
     <Content Include="Views\Account\Index.cshtml" />
     <Content Include="Views\Address\Index.cshtml" />
     <Content Include="Views\CreditCard\Index.cshtml" />
@@ -220,6 +220,9 @@
     <Content Include="Views\FlightSearch\Search.cshtml" />
     <Content Include="Views\FlightSearch\Results.cshtml" />
     <Content Include="Views\Bookings\Book.cshtml" />
+    <Content Include="Views\Bookings\Index.cshtml" />
+    <Content Include="Views\Account\Login.cshtml" />
+    <None Include="Views\Bookings\Cancel.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
