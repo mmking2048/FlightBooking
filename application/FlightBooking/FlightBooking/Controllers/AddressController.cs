@@ -31,7 +31,7 @@ namespace FlightBooking.Controllers
             {
                 if (ModelState.IsValid)
                 {
-                    Client.InsertAddress(address.StreetNumber, address.StreetName, address.City, address.State,
+                    Client.InsertCustomerAddress(CurrentUser.Email, address.StreetNumber, address.StreetName, address.City, address.State,
                         address.ZipCode, address.Country);
                     return RedirectToAction("Index", "Account");
                 }

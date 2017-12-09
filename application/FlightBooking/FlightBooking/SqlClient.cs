@@ -556,6 +556,13 @@ namespace FlightBooking
             }
         }
 
+        public int InsertCustomerAddress(string email, int streetNumber, string streetName, string city, string state, string zipCode, string country)
+        {
+            var addressID = InsertAddress(streetNumber, streetName, city, state, zipCode, country);
+            InsertLivesAt(email, addressID);
+            return addressID;
+        }
+
         public int InsertAddress(int streetNumber, string streetName, string city, string state, string zipCode, string country)
         {
             using (var conn = new NpgsqlConnection(_connString))
@@ -782,7 +789,7 @@ namespace FlightBooking
             }
         }
 
-        public void InsertLivesAt(string email, string addressID)
+        public void InsertLivesAt(string email, int addressID)
         {
             using (var conn = new NpgsqlConnection(_connString))
             {
