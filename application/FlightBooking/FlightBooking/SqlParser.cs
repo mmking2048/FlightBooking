@@ -29,7 +29,7 @@ namespace FlightBooking
             return customers;
         }
 
-        public IEnumerable<Flight> ParseFlights(NpgsqlDataReader reader)
+        public IEnumerable<Flight> ParseFlight(NpgsqlDataReader reader)
         {
             var flights = new List<Flight>();
             var dateColumn = reader.GetOrdinal("date");

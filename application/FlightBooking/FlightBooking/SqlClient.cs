@@ -132,7 +132,7 @@ namespace FlightBooking
             }
         }
 
-        public Airport GetAirport(string iataID) //, string airportName, string country, string state, double latitude, double longitude)
+        public Airport GetAirport(string iataID)
         {
             using (var conn = new NpgsqlConnection(_connString))
             {
@@ -141,15 +141,8 @@ namespace FlightBooking
                 using (var cmd = new NpgsqlCommand())
                 {
                     cmd.Connection = conn;
-                    cmd.CommandText = "SELECT * FROM airport WHERE iata_id = @iata_id"; // AND airportname = @airportname AND country = @country AND " +
-                        // "state = @state AND latitude = @latitude AND longitude = @longitude";
+                    cmd.CommandText = "SELECT * FROM airport WHERE iata_id = @iata_id";
                     cmd.Parameters.AddWithValue("iata_id", iataID);
-                    /*
-                    cmd.Parameters.AddWithValue("country", country);
-                    cmd.Parameters.AddWithValue("state", state);
-                    cmd.Parameters.AddWithValue("latitude", latitude);
-                    cmd.Parameters.AddWithValue("longitude", longitude);
-                    */
                     using (var reader = cmd.ExecuteReader())
                     {
                         return _sqlParser.ParseAirport(reader).First();
@@ -158,10 +151,11 @@ namespace FlightBooking
             }
         }
 
-        public IEnumerable<Booking> GetBooking(int bookingID)
+        public Booking GetBooking(int bookingID)
         {
             using (var conn = new NpgsqlConnection(_connString))
             {
+                Booking booking;
                 conn.Open();
 
                 using (var cmd = new NpgsqlCommand())
@@ -172,33 +166,50 @@ namespace FlightBooking
 
                     using (var reader = cmd.ExecuteReader())
                     {
-                        return _sqlParser.ParseBooking(reader);
+                        booking = _sqlParser.ParseBooking(reader).First();
                     }
+
+                    cmd.CommandText = "SELECT * FROM flight WHERE (date, flightnumber, airlineid) IN (SELECT date, flightnumber, airlineid FROM bookingflights WHERE bookingid = @bookingid);";
+                    cmd.Parameters.AddWithValue("bookingid", bookingID);
+                    using (var reader = cmd.ExecuteReader())
+                    {
+                        booking.BookingFlights = _sqlParser.ParseFlight(reader);
+                    }
+
+                    return booking;
                 }
             }
         }
 
-        public IEnumerable<Booking> GetBooking(int bookingID, string email, string ccNumber, string flightClass)
+        public IEnumerable<Booking> GetBookings(string email)
         {
             using (var conn = new NpgsqlConnection(_connString))
             {
+                IEnumerable<Booking> bookings;
                 conn.Open();
 
                 using (var cmd = new NpgsqlCommand())
                 {
                     cmd.Connection = conn;
-                    cmd.CommandText = "SELECT * FROM booking WHERE bookingid = @bookingid AND email = @email AND ccnumber = @ccnumber AND " +
-                        "flightclass = @flightclass";
-                    cmd.Parameters.AddWithValue("bookingid", bookingID);
+                    cmd.CommandText = "SELECT * FROM booking WHERE email = @email;";
                     cmd.Parameters.AddWithValue("email", email);
-                    cmd.Parameters.AddWithValue("ccnumber", ccNumber);
-                    cmd.Parameters.AddWithValue("flightclass", flightClass);
 
                     using (var reader = cmd.ExecuteReader())
                     {
-                        // TODO: populate BookingFlights list
-                        return _sqlParser.ParseBooking(reader);
+                        bookings = _sqlParser.ParseBooking(reader);
                     }
+
+                    foreach (Booking booking in bookings)
+                    {
+                        cmd.CommandText = "SELECT * FROM flight WHERE (date, flightnumber, airlineid) IN (SELECT date, flightnumber, airlineid FROM bookingflights WHERE bookingid = @bookingid);";
+                        cmd.Parameters.AddWithValue("bookingid", booking.BookingID);
+                        using (var reader = cmd.ExecuteReader())
+                        {
+                            booking.BookingFlights = _sqlParser.ParseFlight(reader);
+                        }
+                    }
+
+                    return bookings;
                 }
             }
         }
@@ -393,56 +404,6 @@ namespace FlightBooking
                 }
             }
         }
-
-        public IEnumerable<Flight> GetBookingFlights(int bookingID)
-        {
-            using (var conn = new NpgsqlConnection(_connString))
-            {
-                conn.Open();
-
-                using (var cmd = new NpgsqlCommand())
-                {
-                    cmd.Connection = conn;
-                    cmd.CommandText =
-                        "SELECT date, f.flightnumber, departuretime, maxcoach, maxfirstclass, arrivaltime, departureairport, arrivalairport, f.airlineid, bookedcoach, bookedfirst " +
-                        "FROM bookingflights NATURAL JOIN flight AS f " +
-                        "WHERE bookingid = @bookingid;";
-                    cmd.Parameters.AddWithValue("bookingid", bookingID);
-
-                    using (var reader = cmd.ExecuteReader())
-                    {
-                        return _sqlParser.ParseFlights(reader);
-                    }
-                }
-            }
-        }
-
-        // TODO: GetCreditCardOwner
-        /*
-        public IEnumerable<Customer> GetCreditCardOwner(string email, string ccNumber)
-        {
-            using (var conn = new NpgsqlConnection(_connString))
-            {
-                conn.Open();
-
-                using (var cmd = new NpgsqlCommand())
-                {
-                    cmd.Connection = conn;
-                    cmd.CommandText = "SELECT * FROM creditcardowner WHERE email = @email AND ccnumber = @ccnumber";
-                    cmd.Parameters.AddWithValue("email", email);
-                    cmd.Parameters.AddWithValue("ccnumber", ccNumber);
-
-                    using (var reader = cmd.ExecuteReader())
-                    {
-                        return _sqlParser.ParseCreditCardOwner(reader);
-                    }
-                }
-            }
-        }
-        */
-        // TODO: GetLivesAt
-        // TODO: GetBookingFlights
-
         #endregion
 
         #region SQL INSERTS
