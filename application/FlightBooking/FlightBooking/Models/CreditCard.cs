@@ -21,12 +21,24 @@ namespace FlightBooking.Models
         public DateTime ExpirationDate { get; set; }
         [DisplayName("CVC")]
         public string Cvc { get; set; }
-        // TODO: replace this with address object?
-        public int AddressID { get; set; }
-        // TODO: Add IEnumberable<Customer> since we said a credit card can have many owners?
-        // public IEnumerable<Customer> Owners { get; set; }
+        public int AddressID;
+        public Address Address { get; set; }
+        public IEnumerable<Customer> Owners { get; set; }
 
         public CreditCard() { }
+
+        public CreditCard(string type, string ccNumber, string cardFirstName, string cardLastName, DateTime expirationDate,
+            string cvc, Address address, IEnumerable<Customer> owners)
+        {
+            Type = type;
+            CcNumber = ccNumber;
+            CardFirstName = cardFirstName;
+            CardLastName = cardLastName;
+            ExpirationDate = expirationDate;
+            Cvc = cvc;
+            Address = address;
+            Owners = new List<Customer>();
+        }
 
         public CreditCard(string type, string ccNumber, string cardFirstName, string cardLastName, DateTime expirationDate,
             string cvc, int addressID)
@@ -38,7 +50,7 @@ namespace FlightBooking.Models
             ExpirationDate = expirationDate;
             Cvc = cvc;
             AddressID = addressID;
-            // Owners = new List<Customer>();
+            Owners = new List<Customer>();
         }
     }
 }

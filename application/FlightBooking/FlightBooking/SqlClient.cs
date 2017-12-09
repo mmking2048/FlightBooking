@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using FlightBooking.Models;
 using Npgsql;
+using System.Linq;
 
 namespace FlightBooking
 {
@@ -20,7 +21,7 @@ namespace FlightBooking
 
         #region SQL SELECTS
 
-        public IEnumerable<Customer> GetCustomer(string email, string firstName, string lastName, string iataID)
+        public Customer GetCustomer(string email)
         {
             using (var conn = new NpgsqlConnection(_connString))
             {
@@ -28,18 +29,37 @@ namespace FlightBooking
                 
                 using (var cmd = new NpgsqlCommand())
                 {
+                    Customer customer;
+
                     cmd.Connection = conn;
                     cmd.CommandText =
                         "SELECT * FROM customer WHERE email = @email AND firstname = @firstname AND lastname = @lastname AND iata_id = @iata_id";
                     cmd.Parameters.AddWithValue("email", email);
-                    cmd.Parameters.AddWithValue("firstname", firstName);
-                    cmd.Parameters.AddWithValue("lastname", lastName);
-                    cmd.Parameters.AddWithValue("iata_id", iataID);
 
                     using (var reader = cmd.ExecuteReader())
                     {
-                        return _sqlParser.ParseCustomer(reader);
+                        customer = _sqlParser.ParseCustomer(reader).First();
                     }
+
+                    cmd.CommandText =
+                        "SELECT * FROM address WHERE addressid IN (SELECT addressid FROM livesat WHERE email = @email)";
+                    cmd.Parameters.AddWithValue("email", email);
+
+                    using (var reader = cmd.ExecuteReader())
+                    {
+                        customer.LivesAt = _sqlParser.ParseAddress(reader);
+                    }
+                    
+                    cmd.CommandText =
+                        "SELECT * FROM creditcard WHERE ccnumber IN (SELECT ccnumber FROM creditcardowner WHERE email = @email)";
+                    cmd.Parameters.AddWithValue("email", email);
+
+                    using (var reader = cmd.ExecuteReader())
+                    {
+                        customer.OwnsCreditCards = _sqlParser.ParseCreditCard(reader);
+                    }
+
+                    return customer;
                 }
             }
         }
@@ -132,7 +152,7 @@ namespace FlightBooking
                     */
                     using (var reader = cmd.ExecuteReader())
                     {
-                        return _sqlParser.ParseAirport(reader);
+                        return _sqlParser.ParseAirport(reader).First();
                     }
                 }
             }
@@ -156,16 +176,18 @@ namespace FlightBooking
 
                     using (var reader = cmd.ExecuteReader())
                     {
+                        // TODO: populate BookingFlights list
                         return _sqlParser.ParseBooking(reader);
                     }
                 }
             }
         }
 
-        public IEnumerable<CreditCard> GetCreditCard(string ccNumber)
+        public CreditCard GetCreditCard(string ccNumber)
         {
             using (var conn = new NpgsqlConnection(_connString))
             {
+                CreditCard creditCard;
                 conn.Open();
 
                 using (var cmd = new NpgsqlCommand())
@@ -176,8 +198,26 @@ namespace FlightBooking
 
                     using (var reader = cmd.ExecuteReader())
                     {
-                        return _sqlParser.ParseCreditCard(reader);
+                        creditCard = _sqlParser.ParseCreditCard(reader).First();
                     }
+
+                    cmd.CommandText = "SELECT * FROM address WHERE addressid = @addressid;";
+                    cmd.Parameters.AddWithValue("addressid", creditCard.AddressID);
+
+                    using (var reader = cmd.ExecuteReader())
+                    {
+                        creditCard.Address = _sqlParser.ParseAddress(reader).First();
+                    }
+
+                    cmd.CommandText = "SELECT * FROM customer WHERE email IN (SELECT email FROM creditcardowner WHERE ccnumber = @ccnumber;";
+                    cmd.Parameters.AddWithValue("ccnumber", ccNumber);
+
+                    using (var reader = cmd.ExecuteReader())
+                    {
+                        creditCard.Owners = _sqlParser.ParseCustomer(reader);
+                    }
+
+                    return creditCard;
                 }
             }
         }
@@ -240,7 +280,7 @@ namespace FlightBooking
                     */
                     using (var reader = cmd.ExecuteReader())
                     {
-                        return _sqlParser.ParseFlight(reader);
+                        return _sqlParser.ParseFlight(reader).First();
                     }
                 }
             }

@@ -28,7 +28,7 @@ namespace FlightBooking
             return customers;
         }
 
-        public Flight ParseFlight(NpgsqlDataReader reader)
+        public IEnumerable<Flight> ParseFlight(NpgsqlDataReader reader)
         {
             var flights = new List<Flight>();
             var dateColumn = reader.GetOrdinal("date");
@@ -61,7 +61,7 @@ namespace FlightBooking
                     arrivalAirport, maxCoach, maxFirst, airlineID, bookedCoach, bookedFirst));
             }
 
-            return flights[0];
+            return flights;
         }
 
 
@@ -124,7 +124,7 @@ namespace FlightBooking
             return airlines;
         }
 
-        public Airport ParseAirport(NpgsqlDataReader reader)
+        public IEnumerable<Airport> ParseAirport(NpgsqlDataReader reader)
         {
             var airports = new List<Airport>();
             var iataIDColumn = reader.GetOrdinal("iataid");
@@ -146,7 +146,7 @@ namespace FlightBooking
                 airports.Add(new Airport(iataID, airportName, country, state, latitude, longitude));
             }
 
-            return airports[0];
+            return airports;
         }
 
         public IEnumerable<CreditCard> ParseCreditCard(NpgsqlDataReader reader)
