@@ -209,14 +209,6 @@ namespace FlightBooking
                         creditCard.Address = _sqlParser.ParseAddress(reader).First();
                     }
 
-                    cmd.CommandText = "SELECT * FROM customer WHERE email IN (SELECT email FROM creditcardowner WHERE ccnumber = @ccnumber;";
-                    cmd.Parameters.AddWithValue("ccnumber", ccNumber);
-
-                    using (var reader = cmd.ExecuteReader())
-                    {
-                        creditCard.Owners = _sqlParser.ParseCustomer(reader);
-                    }
-
                     return creditCard;
                 }
             }

@@ -23,12 +23,11 @@ namespace FlightBooking.Models
         public string Cvc { get; set; }
         public int AddressID;
         public Address Address { get; set; }
-        public IEnumerable<Customer> Owners { get; set; }
 
         public CreditCard() { }
 
         public CreditCard(string type, string ccNumber, string cardFirstName, string cardLastName, DateTime expirationDate,
-            string cvc, Address address, IEnumerable<Customer> owners)
+            string cvc, Address address)
         {
             Type = type;
             CcNumber = ccNumber;
@@ -37,7 +36,6 @@ namespace FlightBooking.Models
             ExpirationDate = expirationDate;
             Cvc = cvc;
             Address = address;
-            Owners = new List<Customer>();
         }
 
         public CreditCard(string type, string ccNumber, string cardFirstName, string cardLastName, DateTime expirationDate,
@@ -50,7 +48,6 @@ namespace FlightBooking.Models
             ExpirationDate = expirationDate;
             Cvc = cvc;
             AddressID = addressID;
-            Owners = new List<Customer>();
         }
     }
 }
