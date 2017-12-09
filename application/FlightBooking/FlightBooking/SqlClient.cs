@@ -330,6 +330,28 @@ namespace FlightBooking
             }
         }
 
+        public IEnumerable<CreditCard> GetCreditCards(string email)
+        {
+            using (var conn = new NpgsqlConnection(_connString))
+            {
+                conn.Open();
+
+                using (var cmd = new NpgsqlCommand())
+                {
+                    cmd.Connection = conn;
+                    cmd.CommandText = "SELECT ccnumber, type, cardfirstname, cardlastname, expirationdate, cvc, addressid " +
+                                      "FROM creditcardowner NATURAL JOIN creditcard " +
+                                      "WHERE email = @email";
+                    cmd.Parameters.AddWithValue("email", email);
+
+                    using (var reader = cmd.ExecuteReader())
+                    {
+                        return _sqlParser.ParseCreditCard(reader);
+                    }
+                }
+            }
+        }
+
         public IEnumerable<CreditCard> GetCreditCard(string type, string ccNumber, string cardFirstName, string cardLastName, 
             DateTime expirationDate, string cvc, int addressID)
         {
