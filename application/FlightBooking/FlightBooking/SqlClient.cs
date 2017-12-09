@@ -766,7 +766,7 @@ namespace FlightBooking
                             arrivalLongitude = (reader[reader.GetOrdinal("longitude")] as double?).Value;
                         }
 
-                        var miles = CalculateDistance.distance(departureLatitude, departureLongitude, arrivalLatitude, arrivalLongitude);
+                        var miles = CalculateDistance.Distance(departureLatitude, departureLongitude, arrivalLatitude, arrivalLongitude);
                         
                         cmd.CommandText =
                             "INSERT INTO mileageprogram (miles, email, airlineid, bookingid) " +
