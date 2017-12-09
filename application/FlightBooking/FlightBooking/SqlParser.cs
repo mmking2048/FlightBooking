@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using FlightBooking.Models;
 using Npgsql;
 
@@ -28,7 +29,7 @@ namespace FlightBooking
             return customers;
         }
 
-        public Flight ParseFlight(NpgsqlDataReader reader)
+        public IEnumerable<Flight> ParseFlights(NpgsqlDataReader reader)
         {
             var flights = new List<Flight>();
             var dateColumn = reader.GetOrdinal("date");
@@ -39,7 +40,7 @@ namespace FlightBooking
             var arrivalAirportColumn = reader.GetOrdinal("arrivalairport");
             var airlineIDColumn = reader.GetOrdinal("airlineid");
             var maxCoachColumn = reader.GetOrdinal("maxcoach");
-            var maxFirstColumn = reader.GetOrdinal("maxfirst");
+            var maxFirstColumn = reader.GetOrdinal("maxfirstclass");
             var bookedCoachColumn = reader.GetOrdinal("bookedcoach");
             var bookedFirstColumn = reader.GetOrdinal("bookedfirst");
 
@@ -61,9 +62,13 @@ namespace FlightBooking
                     arrivalAirport, maxCoach, maxFirst, airlineID, bookedCoach, bookedFirst));
             }
 
-            return flights[0];
+            return flights;
         }
 
+        public Flight ParseFlight(NpgsqlDataReader reader)
+        {
+            return ParseFlights(reader).ElementAt(0);
+        }
 
         public IEnumerable<string[]> ParseRoute(NpgsqlDataReader reader)
         {

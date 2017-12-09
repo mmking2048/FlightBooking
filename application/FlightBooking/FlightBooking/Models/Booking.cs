@@ -1,12 +1,15 @@
 ﻿using System.Collections.Generic;
+using System.ComponentModel;
 
 namespace FlightBooking.Models
 {
     public class Booking
     {
+        [DisplayName("Booking ID")]
         public int BookingID { get; set; }
         public string Email { get; set; }
         public string CcNumber { get; set; }
+        [DisplayName("Flight Class")]
         public string FlightClass { get; set; }
         public IEnumerable<Flight> BookingFlights { get; set; }
 
