@@ -13,10 +13,12 @@ namespace FlightBooking.Controllers
         // GET: Account
         public ActionResult Index()
         {
-            if (string.IsNullOrWhiteSpace(CurrentUser.Email))
+            var email = CurrentUser.Email;
+            if (string.IsNullOrWhiteSpace(email))
                 return RedirectToAction("Login", "Account");
 
-            return View();
+            var customer = Client.GetCustomer(email);
+            return View(customer);
         }
 
         [HttpPost, ActionName("Index")]
