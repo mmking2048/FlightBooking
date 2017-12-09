@@ -533,6 +533,43 @@ namespace FlightBooking
                 using (var cmd = new NpgsqlCommand())
                 {
                     cmd.Connection = conn;
+
+                    // Make sure none of the flights have become full while looking at results
+                    foreach(Flight flight in flights)
+                    {
+                        int? max = 0, booked = 0;
+                        if (flightClass == "First")
+                        {
+                            cmd.CommandText =
+                                "SELECT maxfirstclass, bookedfirst FROM flight WHERE date = @date AND flightNumber = @flightnumber AND airlineid = @airlineid;";
+                            cmd.Parameters.AddWithValue("date", flight.Date);
+                            cmd.Parameters.AddWithValue("flightnumber", flight.FlightNumber);
+                            cmd.Parameters.AddWithValue("airlineid", flight.AirlineID);
+                            using (var reader = cmd.ExecuteReader())
+                            {
+                                max = reader[reader.GetOrdinal("maxfirstclass")] as int?;
+                                booked = reader[reader.GetOrdinal("bookedfirst")] as int?;
+                            }
+                        } else if(flightClass == "Coach")
+                        {
+                            cmd.CommandText =
+                                "SELECT maxcoach, bookedcoach FROM flight WHERE date = @date AND flightNumber = @flightnumber AND airlineid = @airlineid;";
+                            cmd.Parameters.AddWithValue("date", flight.Date);
+                            cmd.Parameters.AddWithValue("flightnumber", flight.FlightNumber);
+                            cmd.Parameters.AddWithValue("airlineid", flight.AirlineID);
+                            using (var reader = cmd.ExecuteReader())
+                            {
+                                max = reader[reader.GetOrdinal("maxcoach")] as int?;
+                                booked = reader[reader.GetOrdinal("bookedcoach")] as int?;
+                            }
+                        }
+                        if (booked == null || max == null || booked >= max)
+                        {
+                            return -1;
+                        }
+                    }
+
+                    // Insert into the booking table
                     cmd.CommandText =
                         "INSERT INTO booking (email, ccnumber, flightclass) " +
                         "VALUES (@email, @ccnumber, @flightclass) RETURNING bookingid;";
@@ -541,6 +578,7 @@ namespace FlightBooking
                     cmd.Parameters.AddWithValue("flightclass", flightClass);
                     var bookingID = (int) cmd.ExecuteScalar();
 
+                    // Insert into the bookingflights table and update booked count
                     foreach (Flight flight in flights)
                     {
                         cmd.CommandText =
@@ -551,8 +589,18 @@ namespace FlightBooking
                         cmd.Parameters.AddWithValue("flightnumber", flight.FlightNumber);
                         cmd.Parameters.AddWithValue("airlineid", flight.AirlineID);
                         cmd.ExecuteNonQuery();
+
+                        if (flightClass == "First")
+                        {
+                            UpdateFlight(flight.Date, flight.FlightNumber, flight.AirlineID, flight.BookedCoach, flight.BookedFirstClass + 1);
+                        }else if (flightClass == "Coach")
+                        {
+                            UpdateFlight(flight.Date, flight.FlightNumber, flight.AirlineID, flight.BookedCoach + 1, flight.BookedFirstClass);
+                        }
                     }
 
+                    InsertMileageProgram(email, bookingID, flights);
+                    
                     return bookingID;
                 }
             }
@@ -669,7 +717,7 @@ namespace FlightBooking
             }
         }
 
-        public void InsertMileageProgram(int miles, string email, string airlineID, int bookingID)
+        public void InsertMileageProgram(string email, int bookingID, IEnumerable<Flight> flights)
         {
             using (var conn = new NpgsqlConnection(_connString))
             {
@@ -677,15 +725,40 @@ namespace FlightBooking
 
                 using (var cmd = new NpgsqlCommand())
                 {
-                    cmd.Connection = conn;
-                    cmd.CommandText =
-                        "INSERT INTO mileageprogram (miles, email, airlineid, bookingid) " +
-                        "VALUES (@miles, @email, @airlineid, @bookingid);";
-                    cmd.Parameters.AddWithValue("miles", miles);
-                    cmd.Parameters.AddWithValue("email", email);
-                    cmd.Parameters.AddWithValue("airlineid", airlineID);
-                    cmd.Parameters.AddWithValue("bookingid", bookingID);
-                    cmd.ExecuteNonQuery();
+                    // calculate the number of miles from initial departure airport to final arrival airport
+
+                    foreach (Flight flight in flights)
+                    {
+                        cmd.Connection = conn;
+                        double departureLatitude = 0, departureLongitude = 0, arrivalLatitude = 0, arrivalLongitude = 0;
+                        cmd.CommandText =
+                            "SELECT latitude, longitude FROM airport WHERE iata_id = @iata_id;";
+                        cmd.Parameters.AddWithValue("iata_id", flight.DepartureAirport);
+                        using (var reader = cmd.ExecuteReader())
+                        {
+                            departureLatitude = (reader[reader.GetOrdinal("latitude")] as double?).Value;
+                            departureLongitude = (reader[reader.GetOrdinal("longitude")] as double?).Value;
+                        }
+                        cmd.CommandText =
+                            "SELECT latitude, longitude FROM airport WHERE iata_id = @iata_id;";
+                        cmd.Parameters.AddWithValue("iata_id", flight.ArrivalAirport);
+                        using (var reader = cmd.ExecuteReader())
+                        {
+                            arrivalLatitude = (reader[reader.GetOrdinal("latitude")] as double?).Value;
+                            arrivalLongitude = (reader[reader.GetOrdinal("longitude")] as double?).Value;
+                        }
+
+                        var miles = CalculateDistance.distance(departureLatitude, departureLongitude, arrivalLatitude, arrivalLongitude);
+                        
+                        cmd.CommandText =
+                            "INSERT INTO mileageprogram (miles, email, airlineid, bookingid) " +
+                            "VALUES (@miles, @email, @airlineid, @bookingid);";
+                        cmd.Parameters.AddWithValue("miles", miles);
+                        cmd.Parameters.AddWithValue("email", email);
+                        cmd.Parameters.AddWithValue("airlineid", flight.AirlineID);
+                        cmd.Parameters.AddWithValue("bookingid", bookingID);
+                        cmd.ExecuteNonQuery();
+                    }
                 }
             }
         }
@@ -820,8 +893,7 @@ namespace FlightBooking
             }
         }
 
-        public void UpdateFlight(DateTime date, int flightNumber, DateTimeOffset departureTime, DateTimeOffset arrivalTime, string departureAirport, 
-            string arrivalAirport, int maxCoach, int maxFirst, string airlineID, int bookedCoach, int bookedFirst)
+        public void UpdateFlight(DateTime date, int flightNumber, string airlineID, int bookedCoach, int bookedFirst)
         {
             using (var conn = new NpgsqlConnection(_connString))
             {
@@ -831,17 +903,10 @@ namespace FlightBooking
                 {
                     cmd.Connection = conn;
                     cmd.CommandText =
-                        "UPDATE flight SET departuretime = @departuretime, arrivaltime = @arrivaltime, departureairport = @departureairport, " +
-                        "arrivalairport = @arrivalairport, maxcoach = @maxcoach, maxfirst = @maxfirst, bookedcoach = @bookedcoach, bookedfirst = @bookedfirst" +
+                        "UPDATE flight SET bookedcoach = @bookedcoach, bookedfirst = @bookedfirst" +
                         "WHERE date = @date AND flightnumber = @flightnumber AND airlineid = @airlineid;";
                     cmd.Parameters.AddWithValue("date", date);
                     cmd.Parameters.AddWithValue("flightnumber", flightNumber);
-                    cmd.Parameters.AddWithValue("departuretime", departureTime);
-                    cmd.Parameters.AddWithValue("arrivaltime", arrivalTime);
-					cmd.Parameters.AddWithValue("departureairport", departureAirport);
-                    cmd.Parameters.AddWithValue("arrivalairport", arrivalAirport);
-                    cmd.Parameters.AddWithValue("maxcoach", maxCoach);
-                    cmd.Parameters.AddWithValue("maxfirst", maxFirst);
 					cmd.Parameters.AddWithValue("airlineid", airlineID);
                     cmd.Parameters.AddWithValue("bookedcoach", bookedCoach);
                     cmd.Parameters.AddWithValue("bookedfirst", bookedFirst);
