@@ -1,8 +1,6 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using System.Net;
 using System.Web.Mvc;
-using FlightBooking.Models;
 
 namespace FlightBooking.Controllers
 {
