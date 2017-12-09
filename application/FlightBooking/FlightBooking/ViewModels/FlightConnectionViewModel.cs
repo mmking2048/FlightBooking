@@ -9,13 +9,13 @@ namespace FlightBooking.ViewModels
 {
     public class FlightConnectionViewModel
     {
-        public FlightConnectionViewModel(Booking booking)
+        public FlightConnectionViewModel(IEnumerable<Flight> flights)
         {
-            var flights = booking.BookingFlights.ToArray();
+            flights = flights.ToArray();
             DepartureTime = flights.Min(f => f.DepartureTime);
             ArrivalTime = flights.Min(f => f.ArrivalTime);
             TotalLength = ArrivalTime - DepartureTime;
-            Flights = booking.BookingFlights;
+            Flights = flights;
 
             if (flights.All(f => f.BookedCoach != f.MaxCoach))
                 CoachPrice = flights.Sum(f => f.Prices.First(p => p.FlightClass == "Coach").Cost);
