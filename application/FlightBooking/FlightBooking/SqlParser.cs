@@ -201,19 +201,13 @@ namespace FlightBooking
             var prices = new List<Price>();
             var flightClassColumn = reader.GetOrdinal("flightclass");
             var costColumn = reader.GetOrdinal("cost");
-            var dateColumn = reader.GetOrdinal("date");
-            var flightNumberColumn = reader.GetOrdinal("flightnumber");
-            var airlineColumn = reader.GetOrdinal("airline");
 
             while (reader.Read())
             {
                 var flightClass = reader[flightClassColumn] as string;
                 var cost = (reader[costColumn] as decimal?).GetValueOrDefault();
-                var date = (reader[dateColumn] as DateTime?).GetValueOrDefault();
-                var flightNumber = (reader[flightNumberColumn] as int?).GetValueOrDefault();
-                var airline = reader[airlineColumn] as string;
 
-                prices.Add(new Price(flightClass, cost, date, flightNumber, airline));
+                prices.Add(new Price(flightClass, cost));
             }
 
             return prices;
