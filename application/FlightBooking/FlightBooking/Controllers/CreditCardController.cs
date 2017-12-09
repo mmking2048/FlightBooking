@@ -15,11 +15,7 @@ namespace FlightBooking.Controllers
         [ChildActionOnly]
         public ActionResult Index()
         {
-            var email = CurrentUser.Email;
-            if (string.IsNullOrWhiteSpace(email))
-                return RedirectToAction("Login", "Account");
-            
-            var creditCards = Client.GetCreditCards(email);
+            var creditCards = Client.GetCreditCards(CurrentUser.Email);
             return PartialView("Index", creditCards);
         }
 

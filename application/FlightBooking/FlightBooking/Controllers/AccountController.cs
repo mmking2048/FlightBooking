@@ -13,6 +13,9 @@ namespace FlightBooking.Controllers
         // GET: Account
         public ActionResult Index()
         {
+            if (string.IsNullOrWhiteSpace(CurrentUser.Email))
+                return RedirectToAction("Login", "Account");
+
             return View();
         }
 
