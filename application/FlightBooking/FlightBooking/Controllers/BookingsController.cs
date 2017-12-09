@@ -13,11 +13,11 @@ namespace FlightBooking.Controllers
 
         public ActionResult Index()
         {
-            // TODO: database search for bookings
-            var booking = new Booking(2043, "ab@email.com", "1111000011110000", "Coach");
-            booking.BookingFlights = Client.GetBookingFlights(booking.BookingID);
-            var bookings = new[] {booking};
+            var email = CurrentUser.Email;
+            if (string.IsNullOrWhiteSpace(email))
+                return RedirectToAction("Login", "Account");
 
+            var bookings = Client.GetBooking(email);
             return View("Index", bookings);
         }
         

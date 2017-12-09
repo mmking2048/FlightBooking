@@ -15,8 +15,11 @@ namespace FlightBooking.Controllers
         [ChildActionOnly]
         public ActionResult Index()
         {
-            // TODO: database search for list of credit cards
-            var creditCards = new[] {new CreditCard("Visa", "1111000011110000", "First", "Last", DateTime.Now, "111", 1)};
+            var email = CurrentUser.Email;
+            if (string.IsNullOrWhiteSpace(email))
+                return RedirectToAction("Login", "Account");
+            
+            var creditCards = Client.GetCreditCards(email);
             return PartialView("Index", creditCards);
         }
 
