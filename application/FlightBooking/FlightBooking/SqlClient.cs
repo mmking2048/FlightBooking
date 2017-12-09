@@ -997,7 +997,7 @@ namespace FlightBooking
                 {
                     cmd.Connection = conn;
                     cmd.CommandText =
-                        "DELETE FROM booking WHERE bookingid = @bookingid AND  = @ AND  = @ AND  = @;";
+                        "DELETE FROM booking WHERE bookingid = @bookingid;";
                     cmd.Parameters.AddWithValue("bookingid", bookingID);
                     cmd.ExecuteNonQuery();
                 }

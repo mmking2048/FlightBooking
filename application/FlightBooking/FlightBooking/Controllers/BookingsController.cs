@@ -14,7 +14,7 @@ namespace FlightBooking.Controllers
         public ActionResult Index()
         {
             // TODO: database search for bookings
-            var booking = new Booking(2042, "ab@email.com", "1111000011110000", "Coach");
+            var booking = new Booking(2043, "ab@email.com", "1111000011110000", "Coach");
             booking.BookingFlights = Client.GetBookingFlights(booking.BookingID);
             var bookings = new[] {booking};
 
@@ -33,7 +33,8 @@ namespace FlightBooking.Controllers
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
             
-            var booking = Client.GetBooking(id.Value)?.First();
+            var bookings = Client.GetBooking(id.Value).ToArray();
+            var booking = bookings.Length != 0 ? bookings.First() : null;
             if (booking == null)
             {
                 return HttpNotFound();
