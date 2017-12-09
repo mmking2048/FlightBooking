@@ -13,9 +13,8 @@ namespace FlightBooking.Controllers
 
         [ChildActionOnly]
         public ActionResult Index()
-        {
-            // TODO: fetch list of addresses
-            var addresses = new[] {new Address(111, "Street", "Chicago", "IL", "60600", "United States", 1)};
+        {           
+            var addresses = Client.GetAddress(CurrentUser.Email);
             return PartialView("Index", addresses);
         }
 

@@ -15,8 +15,7 @@ namespace FlightBooking.Controllers
         [ChildActionOnly]
         public ActionResult Index()
         {
-            // TODO: database search for list of credit cards
-            var creditCards = new[] {new CreditCard("Visa", "1111000011110000", "First", "Last", DateTime.Now, "111", 1)};
+            var creditCards = Client.GetCreditCards(CurrentUser.Email);
             return PartialView("Index", creditCards);
         }
 
@@ -54,7 +53,7 @@ namespace FlightBooking.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            var creditCard = Client.GetCreditCard(id)?.First();
+            var creditCard = Client.GetCreditCard(id);
 
             if (creditCard == null)
             {
@@ -72,7 +71,7 @@ namespace FlightBooking.Controllers
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
             
-            var creditCard = Client.GetCreditCard(id).First();
+            var creditCard = Client.GetCreditCard(id);
             if (TryUpdateModel(creditCard, "", new[] { "Type", "CcNumber", "CardFirstName", "CardLastName", "ExpirationDate", "Cvc", "AddressID" }))
             {
                 try
@@ -99,7 +98,7 @@ namespace FlightBooking.Controllers
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
             
-            var creditCard = Client.GetCreditCard(id)?.First();
+            var creditCard = Client.GetCreditCard(id);
             if (creditCard == null)
             {
                 return HttpNotFound();

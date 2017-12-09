@@ -1,8 +1,6 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using System.Net;
 using System.Web.Mvc;
-using FlightBooking.Models;
 
 namespace FlightBooking.Controllers
 {
@@ -13,11 +11,11 @@ namespace FlightBooking.Controllers
 
         public ActionResult Index()
         {
-            // TODO: database search for bookings
-            var booking = new Booking(2043, "ab@email.com", "1111000011110000", "Coach");
-            booking.BookingFlights = Client.GetBookingFlights(booking.BookingID);
-            var bookings = new[] {booking};
+            var email = CurrentUser.Email;
+            if (string.IsNullOrWhiteSpace(email))
+                return RedirectToAction("Login", "Account");
 
+            var bookings = Client.GetBooking(email);
             return View("Index", bookings);
         }
         
@@ -33,13 +31,11 @@ namespace FlightBooking.Controllers
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
             
-            var bookings = Client.GetBooking(id.Value).ToArray();
-            var booking = bookings.Length != 0 ? bookings.First() : null;
+            var booking = Client.GetBooking(id.Value);
             if (booking == null)
             {
                 return HttpNotFound();
             }
-            booking.BookingFlights = Client.GetBookingFlights(id.Value);
 
             return View(booking.BookingFlights);
         }
