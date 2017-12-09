@@ -158,6 +158,26 @@ namespace FlightBooking
             }
         }
 
+        public IEnumerable<Booking> GetBooking(int bookingID)
+        {
+            using (var conn = new NpgsqlConnection(_connString))
+            {
+                conn.Open();
+
+                using (var cmd = new NpgsqlCommand())
+                {
+                    cmd.Connection = conn;
+                    cmd.CommandText = "SELECT * FROM booking WHERE bookingid = @bookingid;";
+                    cmd.Parameters.AddWithValue("bookingid", bookingID);
+
+                    using (var reader = cmd.ExecuteReader())
+                    {
+                        return _sqlParser.ParseBooking(reader);
+                    }
+                }
+            }
+        }
+
         public IEnumerable<Booking> GetBooking(int bookingID, string email, string ccNumber, string flightClass)
         {
             using (var conn = new NpgsqlConnection(_connString))
@@ -361,7 +381,7 @@ namespace FlightBooking
                 {
                     cmd.Connection = conn;
                     cmd.CommandText = "SELECT * FROM price WHERE flightclass = @flightclass AND cost = @cost AND date = @date AND airline = @airline";
-                    cmd.Parameters.AddWithValue("", flightClass);
+                    cmd.Parameters.AddWithValue("flightclass", flightClass);
                     cmd.Parameters.AddWithValue("cost", cost);
                     cmd.Parameters.AddWithValue("date", date);
                     cmd.Parameters.AddWithValue("", flightNumber);
@@ -370,6 +390,29 @@ namespace FlightBooking
                     using (var reader = cmd.ExecuteReader())
                     {
                         return _sqlParser.ParsePrice(reader);
+                    }
+                }
+            }
+        }
+
+        public IEnumerable<Flight> GetBookingFlights(int bookingID)
+        {
+            using (var conn = new NpgsqlConnection(_connString))
+            {
+                conn.Open();
+
+                using (var cmd = new NpgsqlCommand())
+                {
+                    cmd.Connection = conn;
+                    cmd.CommandText =
+                        "SELECT date, f.flightnumber, departuretime, maxcoach, maxfirstclass, arrivaltime, departureairport, arrivalairport, f.airlineid, bookedcoach, bookedfirst " +
+                        "FROM bookingflights NATURAL JOIN flight AS f " +
+                        "WHERE bookingid = @bookingid;";
+                    cmd.Parameters.AddWithValue("bookingid", bookingID);
+
+                    using (var reader = cmd.ExecuteReader())
+                    {
+                        return _sqlParser.ParseFlights(reader);
                     }
                 }
             }
@@ -986,7 +1029,7 @@ namespace FlightBooking
                 {
                     cmd.Connection = conn;
                     cmd.CommandText =
-                        "DELETE FROM booking WHERE bookingid = @bookingid AND  = @ AND  = @ AND  = @;";
+                        "DELETE FROM booking WHERE bookingid = @bookingid;";
                     cmd.Parameters.AddWithValue("bookingid", bookingID);
                     cmd.ExecuteNonQuery();
                 }
