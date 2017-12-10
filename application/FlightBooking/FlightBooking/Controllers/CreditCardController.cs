@@ -110,7 +110,7 @@ namespace FlightBooking.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(string id)
         {
-            Client.DeleteCreditCard(id);
+            Client.DeleteCreditCard(CurrentUser.Email, id);
             return RedirectToAction("Index", "Account");
         }
     }

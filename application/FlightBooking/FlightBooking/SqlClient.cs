@@ -594,6 +594,22 @@ namespace FlightBooking
         public void InsertCreditCard(string email, string type, string ccNumber, string cardFirstName, string cardLastName, DateTime expirationDate,
             string cvc, int addressID)
         {
+            InsertCreditCard(type, ccNumber, cardFirstName, cardLastName, expirationDate,
+            cvc, addressID);
+            InsertCreditCardOwner(email, ccNumber);
+        }
+
+        public void InsertCreditCard(string email, string type, string ccNumber, string cardFirstName, string cardLastName, DateTime expirationDate,
+            string cvc, Address address)
+        {
+            InsertCreditCard(type, ccNumber, cardFirstName, cardLastName, expirationDate,
+            cvc, address.AddressID);
+            InsertCreditCardOwner(email, ccNumber);
+        }
+
+        public void InsertCreditCard(string type, string ccNumber, string cardFirstName, string cardLastName, DateTime expirationDate,
+            string cvc, int addressID)
+        {
             using (var conn = new NpgsqlConnection(_connString))
             {
                 conn.Open();
@@ -608,13 +624,12 @@ namespace FlightBooking
                     cmd.Parameters.AddWithValue("ccnumber", ccNumber);
                     cmd.Parameters.AddWithValue("cardfirstname", cardFirstName);
                     cmd.Parameters.AddWithValue("cardlastname", cardLastName);
-                    cmd.Parameters.AddWithValue("expirationdate", expirationDate);
+                    cmd.Parameters.AddWithValue("expirationdate", expirationDate.Date.ToString());
                     cmd.Parameters.AddWithValue("cvc", cvc);
                     cmd.Parameters.AddWithValue("addressid", addressID);
                     cmd.ExecuteNonQuery();
                 }
             }
-            InsertCreditCardOwner(email, ccNumber);
         }
 
         public void InsertAirline(string airlineID, string country, string airlineName)
@@ -958,7 +973,7 @@ namespace FlightBooking
                     cmd.Parameters.AddWithValue("type", type);
                     cmd.Parameters.AddWithValue("cardfirstname", cardFirstName);
                     cmd.Parameters.AddWithValue("cardlastname", cardLastName);
-                    cmd.Parameters.AddWithValue("expirationdate", expirationDate);
+                    cmd.Parameters.AddWithValue("expirationdate", expirationDate.Date.ToString());
 					cmd.Parameters.AddWithValue("cvc", cvc);
                     cmd.Parameters.AddWithValue("addressid", addressID);
                     cmd.Parameters.AddWithValue("ccnumber", ccNumber);
@@ -1138,6 +1153,12 @@ namespace FlightBooking
                     cmd.ExecuteNonQuery();
                 }
             }
+        }
+
+        public void DeleteCreditCard(string email, string ccNumber)
+        {
+            DeleteCreditCard(ccNumber);
+            DeleteCreditCardOwner(email, ccNumber);
         }
 
         public void DeleteAirline(string airlineID)
