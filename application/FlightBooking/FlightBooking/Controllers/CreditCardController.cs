@@ -32,7 +32,7 @@ namespace FlightBooking.Controllers
             {
                 if (ModelState.IsValid)
                 {
-                    Client.InsertCreditCard(creditCard.Type, creditCard.CcNumber, creditCard.CardFirstName,
+                    Client.InsertCreditCard(CurrentUser.Email, creditCard.Type, creditCard.CcNumber, creditCard.CardFirstName,
                         creditCard.CardLastName, creditCard.ExpirationDate, creditCard.Cvc, creditCard.AddressID);
 
                     return RedirectToAction("Index", "Account");

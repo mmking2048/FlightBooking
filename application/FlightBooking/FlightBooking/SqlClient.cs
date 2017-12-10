@@ -591,7 +591,7 @@ namespace FlightBooking
             }
         }
 
-        public void InsertCreditCard(string type, string ccNumber, string cardFirstName, string cardLastName, DateTime expirationDate,
+        public void InsertCreditCard(string email, string type, string ccNumber, string cardFirstName, string cardLastName, DateTime expirationDate,
             string cvc, int addressID)
         {
             using (var conn = new NpgsqlConnection(_connString))
@@ -614,6 +614,7 @@ namespace FlightBooking
                     cmd.ExecuteNonQuery();
                 }
             }
+            InsertCreditCardOwner(email, ccNumber);
         }
 
         public void InsertAirline(string airlineID, string country, string airlineName)
