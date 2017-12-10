@@ -25,7 +25,7 @@ namespace FlightBooking.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "StreetNumber,StreetName,City,ZipCode,Country")] Address address)
+        public ActionResult Create([Bind(Include = "StreetNumber,StreetName,City,State,ZipCode,Country")] Address address)
         {
             try
             {
