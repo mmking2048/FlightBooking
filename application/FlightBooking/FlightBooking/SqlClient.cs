@@ -914,6 +914,24 @@ namespace FlightBooking
             }
         }
 
+        public void UpdateCustomer(string email, string iataID)
+        {
+            using (var conn = new NpgsqlConnection(_connString))
+            {
+                conn.Open();
+
+                using (var cmd = new NpgsqlCommand())
+                {
+                    cmd.Connection = conn;
+                    cmd.CommandText =
+                        "UPDATE customer SET iata_id = @iata_id WHERE email = @email;";
+                    cmd.Parameters.AddWithValue("email", email);
+                    cmd.Parameters.AddWithValue("iata_id", iataID);
+                    cmd.ExecuteNonQuery();
+                }
+            }
+        }
+
         public void UpdateAirport(string iataID, string airportName, string country, string state, double latitude, double longitude)
         {
             using (var conn = new NpgsqlConnection(_connString))

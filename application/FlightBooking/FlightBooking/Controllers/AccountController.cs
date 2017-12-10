@@ -24,7 +24,7 @@ namespace FlightBooking.Controllers
         [HttpPost, ActionName("Index")]
         public ActionResult Index([Bind(Include = "IataID")] Customer customer)
         {
-            // TODO: database save iata ID
+            Client.UpdateCustomer(CurrentUser.Email, customer.IataID);
             return View();
         }
 
