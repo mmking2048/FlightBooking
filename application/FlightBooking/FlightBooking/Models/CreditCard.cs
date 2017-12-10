@@ -20,7 +20,7 @@ namespace FlightBooking.Models
         public DateTime ExpirationDate { get; set; }
         [DisplayName("CVC")]
         public string Cvc { get; set; }
-        public int AddressID;
+        public int AddressID { get; set; }
         public Address Address { get; set; }
 
         public CreditCard() { }

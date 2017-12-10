@@ -624,7 +624,7 @@ namespace FlightBooking
                     cmd.Parameters.AddWithValue("ccnumber", ccNumber);
                     cmd.Parameters.AddWithValue("cardfirstname", cardFirstName);
                     cmd.Parameters.AddWithValue("cardlastname", cardLastName);
-                    cmd.Parameters.AddWithValue("expirationdate", expirationDate.Date.ToString());
+                    cmd.Parameters.AddWithValue("expirationdate", expirationDate.Date);
                     cmd.Parameters.AddWithValue("cvc", cvc);
                     cmd.Parameters.AddWithValue("addressid", addressID);
                     cmd.ExecuteNonQuery();
@@ -973,7 +973,7 @@ namespace FlightBooking
                     cmd.Parameters.AddWithValue("type", type);
                     cmd.Parameters.AddWithValue("cardfirstname", cardFirstName);
                     cmd.Parameters.AddWithValue("cardlastname", cardLastName);
-                    cmd.Parameters.AddWithValue("expirationdate", expirationDate.Date.ToString());
+                    cmd.Parameters.AddWithValue("expirationdate", expirationDate.Date);
 					cmd.Parameters.AddWithValue("cvc", cvc);
                     cmd.Parameters.AddWithValue("addressid", addressID);
                     cmd.Parameters.AddWithValue("ccnumber", ccNumber);
