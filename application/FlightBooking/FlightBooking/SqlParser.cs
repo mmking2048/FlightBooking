@@ -48,8 +48,8 @@ namespace FlightBooking
             {
                 var date = (reader[dateColumn] as DateTime?).GetValueOrDefault();
                 var flightNumber = (reader[flightNumberColumn] as int?).GetValueOrDefault();
-                var departureTime = (reader[departureTimeColumn] as DateTime?).GetValueOrDefault();
-                var arrivalTime = (reader[arrivalTimeColumn] as DateTime?).GetValueOrDefault();
+                var departureTime = (reader[departureTimeColumn] as TimeSpan?).GetValueOrDefault();
+                var arrivalTime = (reader[arrivalTimeColumn] as TimeSpan?).GetValueOrDefault();
                 var departureAirport = reader[departureAirportColumn] as string;
                 var arrivalAirport = reader[arrivalAirportColumn] as string;
                 var airlineID = reader[airlineIDColumn] as string;

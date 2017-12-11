@@ -21,7 +21,7 @@ namespace FlightBooking.ViewModels
                 CoachPrice = flights.Sum(f => f.Prices.First(p => p.FlightClass == "Coach").Cost);
 
             if (flights.All(f => f.BookedFirstClass != f.MaxFirstClass))
-                FirstClassPrice = flights.Sum(f => f.Prices.First(p => p.FlightClass == "First Class").Cost);
+                FirstClassPrice = flights.Sum(f => f.Prices.First(p => p.FlightClass == "First").Cost);
         }
 
         [DisplayName("Coach")]
@@ -31,11 +31,11 @@ namespace FlightBooking.ViewModels
         [DisplayName("Length")]
         public TimeSpan TotalLength { get; }
         [DisplayName("Departure")]
-        [DisplayFormat(DataFormatString = "{0:hh:mm tt}", ApplyFormatInEditMode = true)]
-        public DateTimeOffset DepartureTime { get; }
+        [DisplayFormat(DataFormatString = "{0:hh\\:mm}", ApplyFormatInEditMode = true)]
+        public TimeSpan DepartureTime { get; }
         [DisplayName("Arrival")]
-        [DisplayFormat(DataFormatString = "{0:hh:mm tt}", ApplyFormatInEditMode = true)]
-        public DateTimeOffset ArrivalTime { get; }
+        [DisplayFormat(DataFormatString = "{0:hh\\:mm}", ApplyFormatInEditMode = true)]
+        public TimeSpan ArrivalTime { get; }
         public IEnumerable<Flight> Flights { get; }
     }
 }
