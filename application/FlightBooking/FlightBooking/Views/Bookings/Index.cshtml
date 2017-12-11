@@ -39,7 +39,7 @@
             @foreach (var flight in booking.BookingFlights)
             {
                 var coachPrice = flight.Prices.First(p => p.FlightClass == "Coach");
-                var firstClassPrice = flight.Prices.First(p => p.FlightClass == "First Class");
+                var firstClassPrice = flight.Prices.First(p => p.FlightClass == "First");
                 <tr>
                     <td>AA</td>
                     <td>@Html.DisplayFor(modelItem => flight.FlightNumber)</td>
