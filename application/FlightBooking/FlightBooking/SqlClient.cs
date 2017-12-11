@@ -230,6 +230,7 @@ namespace FlightBooking
         {
             using (var conn = new NpgsqlConnection(_connString))
             {
+                IEnumerable<Booking> bookings;
                 conn.Open();
 
                 using (var cmd = new NpgsqlCommand())
@@ -240,8 +241,33 @@ namespace FlightBooking
 
                     using (var reader = cmd.ExecuteReader())
                     {
-                        return _sqlParser.ParseBooking(reader);
+                        bookings = _sqlParser.ParseBooking(reader);
                     }
+
+                    foreach (var booking in bookings)
+                    {
+                        cmd.CommandText = "SELECT * FROM flight WHERE (date, flightnumber, airlineid) IN (SELECT date, flightnumber, airlineid FROM bookingflights WHERE bookingid = @bookingid);";
+                        cmd.Parameters.AddWithValue("bookingid", booking.BookingID);
+                        using (var reader = cmd.ExecuteReader())
+                        {
+                            booking.BookingFlights = _sqlParser.ParseFlight(reader);
+                        }
+
+                        foreach (var flight in booking.BookingFlights)
+                        {
+                            cmd.CommandText = "SELECT * FROM price WHERE date = @date AND flightnumber = @flightnumber AND airlineid = @airlineid;";
+                            cmd.Parameters.AddWithValue("date", flight.Date);
+                            cmd.Parameters.AddWithValue("flightnumber", flight.FlightNumber);
+                            cmd.Parameters.AddWithValue("airlineid", flight.AirlineID);
+
+                            using (var reader = cmd.ExecuteReader())
+                            {
+                                flight.Prices = _sqlParser.ParsePrice(reader);
+                            }
+                        }
+                    }
+
+                    return bookings;
                 }
             }
         }
