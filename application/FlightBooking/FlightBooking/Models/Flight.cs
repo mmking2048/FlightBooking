@@ -11,11 +11,11 @@ namespace FlightBooking.Models
         [DisplayName("Number")]
         public int FlightNumber { get; set; }
         [DisplayName("Departure")]
-        [DisplayFormat(DataFormatString = "{0:hh:mm tt}", ApplyFormatInEditMode = true)]
-        public DateTimeOffset DepartureTime { get; set; }
+        [DisplayFormat(DataFormatString = "{0:hh\\:mm}", ApplyFormatInEditMode = true)]
+        public TimeSpan DepartureTime { get; set; }
         [DisplayName("Arrival")]
-        [DisplayFormat(DataFormatString = "{0:hh:mm tt}", ApplyFormatInEditMode = true)]
-        public DateTimeOffset ArrivalTime { get; set; }
+        [DisplayFormat(DataFormatString = "{0:hh\\:mm}", ApplyFormatInEditMode = true)]
+        public TimeSpan ArrivalTime { get; set; }
         public TimeSpan Length => ArrivalTime - DepartureTime;
         [DisplayName("From")]
         public string DepartureAirport { get; set; }
@@ -29,8 +29,8 @@ namespace FlightBooking.Models
         public int BookedFirstClass { get; set; }
         public IEnumerable<Price> Prices { get; set; }
 
-        public Flight(DateTime date, int flightNumber, DateTimeOffset departureTime,
-        DateTimeOffset arrivalTime, string departureAirport, string arrivalAirport,
+        public Flight(DateTime date, int flightNumber, TimeSpan departureTime,
+        TimeSpan arrivalTime, string departureAirport, string arrivalAirport,
         int maxCoach, int maxFirstClass, string airlineID, int bookedCoach, int bookedFirstClass)
         {
             Date = date;
